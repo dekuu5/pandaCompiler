@@ -1,0 +1,13 @@
+fn main() {
+    let x: int = 5;
+    let y: float = 5.0;
+
+
+    if x == y {
+
+
+        print(x + y);
+    }
+}
+
+
