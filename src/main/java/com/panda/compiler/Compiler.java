@@ -3,23 +3,18 @@ package com.panda.compiler;
 import com.panda.reader.FileReaderForlexicalAnalysis;
 
 public class Compiler {
-    FileReaderForlexicalAnalysis fileReaderForlexicalAnalysis;
+    LexicalAnalysis lexicalAnalysis;
     public Compiler(String fileName) {
         System.out.println("Compiler is running...");
-        try {
-            fileReaderForlexicalAnalysis = new FileReaderForlexicalAnalysis(fileName);
-        } catch (Exception e) {
-            System.out.println("File not found");
-        }
+       lexicalAnalysis= new LexicalAnalysis(fileName);
     }
 
     public void compile() {
         System.out.println("Compiling...");
-        while (fileReaderForlexicalAnalysis.CheckForLine()) {
-            System.out.println(fileReaderForlexicalAnalysis.getLine());
-        }
+        lexicalAnalysis.analyze();
+        lexicalAnalysis.printTokens();
         System.out.println("Compilation finished");
-        fileReaderForlexicalAnalysis.close();
+
     }
 
 }
