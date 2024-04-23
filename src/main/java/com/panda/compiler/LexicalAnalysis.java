@@ -24,8 +24,12 @@ public class LexicalAnalysis {
     public void analyze(){
         while(fileReaderForlexicalAnalysis.CheckForLine()){
             String line = fileReaderForlexicalAnalysis.getLine();
+            if(isThisCommentLine(line)){
+                lineNumber++;
+                columnNumber =1;
+                continue;
+            }
             analyzeLine(line);
-            printTokens();
             lineNumber++;
             columnNumber =1;
         }
@@ -58,7 +62,7 @@ public class LexicalAnalysis {
                   i++;
                 }
 
-          }
+        }
     }
 
     private boolean isAlphanumeric(char currentChar) {
@@ -66,9 +70,9 @@ public class LexicalAnalysis {
     }
     private static TokenType getTokenType(String value) {
         // Example: Determine the TokenType based on the value
-        if (value.matches("[a-zA-Z]+")) {
+        if (value.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
             return TokenType.IDENTIFIER;
-        } else if (value.matches("\\d+")) {
+        } else if (value.matches("[-+]?[0-9]+")||value.matches("[-+]?[0-9]*\\.[0-9]+")) {
             return TokenType.NUMBER;
         } else {
             return TokenType.UNKNOWN;
@@ -83,6 +87,18 @@ public class LexicalAnalysis {
             case '=' -> TokenType.ASSIGNMENT;
             default -> TokenType.UNKNOWN;
         };
+    }
+    private boolean isThisCommentLine(String line){
+        int i =0;
+        char currentChar;
+        if(i < line.length()) currentChar=line.charAt(i); else return false;
+        while (Character.isWhitespace(currentChar)){ i++; currentChar=line.charAt(i);}
+        if (currentChar == '/' && i + 1 < line.length() && line.charAt(i + 1) == '/')  return true;
+        if (currentChar == '/' && i + 1 < line.length() && line.charAt(i + 1) == '*') return true;
+        if (i + 1 < line.length() && currentChar=='*') return true;
+        return i + 1 < line.length() && line.charAt(i) == '*' && line.charAt(i + 1) == '/';
+
+
     }
 
     public List<Token> getTokens() {
