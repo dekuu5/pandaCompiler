@@ -1,0 +1,22 @@
+Keywords
+Variable Declarations and Control Flow:
+let, mut, if, else, while, for, loop, match, return, break, continue
+Function and Struct Definitions:
+fn, struct, enum, trait, impl
+Ownership and Borrowing:
+move, ref, mut
+Data Types and Modifiers:
+bool, char, i8, i16, i32, i64, u8, u16, u32, u64, f32, f64, str
+Concurrency and Error Handling:
+async, await, Result, Ok, Err
+Regular Expressions:
+Identifiers: [a-zA-Z_][a-zA-Z0-9_]*
+Numbers:
+Regular expression for integers: [-+]?[0-9]+
+Regular expression for floating-point numbers: [-+]?[0-9]*\.[0-9]+
+Operators and Punctuation: [+\-*/=<>!%^&|]+
+String Literals: \"(\\.|[^\"])*\"
+Whitespace: \s+
+Comments:
+Regular expression for single-line comments: //.*
+Regular expression for multi-line comments: /\*(.|[\r\n])*?\*/
