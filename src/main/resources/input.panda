@@ -1,6 +1,17 @@
-let x = 5
+fn main() {
+    // Single-line comment
+    /*
+    *  Multi-line comment
+    */
+    let x5: int = 5;
+    let y: float = 5.0;
 
-let y == 22
 
-let wqw == 22.22
+    if x == y {
+
+
+        print(x + y);
+    }
+}
+
 
