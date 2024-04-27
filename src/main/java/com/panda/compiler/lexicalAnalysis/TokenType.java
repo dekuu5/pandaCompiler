@@ -1,55 +1,23 @@
 package com.panda.compiler.lexicalAnalysis;
 
 public enum TokenType {
-
-    IF,
-    LET,
-    FN,
-    ELSE,
-    WHILE,
-    FOR,
-    RETURN,
-    BREAK,
-    CONTINUE,
-    PRINT,
-    // KEYWARDS DONE
-
     IDENTIFIER,
     NUMBER,
-    STRING,
-
-    //OPREATORS
-
-
+    OPERATOR,
     PARENTHESIS,
     SEMICOLON,
     ASSIGNMENT,
 
     CURLYBRACKET,
-    BRACKET,
+    STRING,
+    IF,
+    LET,
+    ELSE,
+    WHILE,
+    FOR,
+    RETURN,
 
-    PLUS,
-    MINUS,
-    DIV,
-    MULT,
-    POWER,
-    REMINDER,
-    BIGGER,
-    SMALLER,
-    BIGGEREQUAL,
-    SMALLEREQUAL,
-    EQUAL,
-    NOTEQUAL,
-    OR,
-    AND,
-    NOT,
-    XOR,
-    FALSE,
-    TRUE,
-    EOF,
+
     UNKNOWN
 
-
-
 }
-//CURLYBRACKET

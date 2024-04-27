@@ -1,6 +1,6 @@
 package com.panda.compiler.lexicalAnalysis;
 
-public record Token(TokenType type, String value, Object literal, int line) {
+public record Token(TokenType type, String value, int lineNumber, int columnNumber) {
     // Constructor
 
     // Override toString() for debugging purposes
@@ -9,8 +9,7 @@ public record Token(TokenType type, String value, Object literal, int line) {
         return "Token{" +
                 "type=" + type +
                 ", value='" + value + '\'' +
-
-                ", position=(" + line +")}";
+                ", position=(" + lineNumber + "," + columnNumber + ")}";
     }
 }
 
