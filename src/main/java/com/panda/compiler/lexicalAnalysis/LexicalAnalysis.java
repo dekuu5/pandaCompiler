@@ -1,4 +1,4 @@
-package com.panda.compiler;
+package com.panda.compiler.lexicalAnalysis;
 
 import com.panda.reader.FileReaderForlexicalAnalysis;
 
@@ -13,6 +13,7 @@ public class LexicalAnalysis {
 
     public LexicalAnalysis(String fileName) {
         tokens= new LinkedList<>();
+
         try {
             fileReaderForlexicalAnalysis = new FileReaderForlexicalAnalysis(fileName);
         } catch (Exception e) {
@@ -47,12 +48,33 @@ public class LexicalAnalysis {
                         columnNumber++;
                     }
                     i++;
-                }else if(isAlphanumeric(currentChar)) {
+                }else if (currentChar == '"') {
+                    StringBuilder value = new StringBuilder();
+                    while(i<line.length()-1 ){
+                        if (line.charAt(i) == '"' && line.charAt(i-1) == '\\')
+                            break;
+                        value.append(line.charAt(i));
+                        i++;
+                    }
+                    if (line.charAt(i) == '"')
+                        value.append(line.charAt(i));
+
+                    tokens.add(new Token(
+                            getTokenType(value.toString()),
+                            value.toString(),
+                            lineNumber,
+                            columnNumber
+                    ));
+                    columnNumber += value.length();
+
+                }
+                else if(isAlphanumeric(currentChar)) {
                     StringBuilder value = new StringBuilder();
                     while(i<line.length() && !Character.isWhitespace(line.charAt(i)) && isAlphanumeric(line.charAt(i))){
                         value.append(line.charAt(i));
                         i++;
                     }
+
                     tokens.add(new Token(getTokenType(value.toString()), value.toString(), lineNumber, columnNumber));
                     columnNumber += value.length();
                 }else {
@@ -70,9 +92,13 @@ public class LexicalAnalysis {
     }
     private static TokenType getTokenType(String value) {
         // Example: Determine the TokenType based on the value
-        if (value.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+        if (value.matches("[a-zA-Z_][a-zA-Z0-9_]*")) { // matches any word that start with a letter or _ and have any number of letters or characters
             return TokenType.IDENTIFIER;
-        } else if (value.matches("[-+]?[0-9]+")||value.matches("[-+]?[0-9]*\\.[0-9]+")) {
+
+        } else if (value.matches("\"(\\.|[^\"])*")){
+            return TokenType.STRING;
+        }
+        else if (value.matches("[-+]?[0-9]+")||value.matches("[-+]?[0-9]*\\.[0-9]+")) { // matches any positive or negative integer or float number
             return TokenType.NUMBER;
         } else {
             return TokenType.UNKNOWN;
