@@ -1,6 +1,6 @@
 package com.panda.compiler;
 
-import com.panda.reader.FileReaderForlexicalAnalysis;
+import com.panda.compiler.lexicalAnalysis.LexicalAnalysis;
 
 public class Compiler {
     LexicalAnalysis lexicalAnalysis;
