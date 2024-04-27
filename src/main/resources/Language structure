@@ -1,14 +1,17 @@
 Keywords
 Variable Declarations and Control Flow:
-let, mut, if, else, while, for, loop, match, return, break, continue
+let, if, else, while, for, return, break, continue
+
+logical operators:
+>, < , <= , >= , == , != , || , &&, !, ~
+
+arithmetic operators:
++, - *, /, ^, %
+
 Function and Struct Definitions:
-fn, struct, enum, trait, impl
-Ownership and Borrowing:
-move, ref, mut
+fn, struct,
 Data Types and Modifiers:
-bool, char, i8, i16, i32, i64, u8, u16, u32, u64, f32, f64, str
-Concurrency and Error Handling:
-async, await, Result, Ok, Err
+bool, char, int, uint, float, str
 Regular Expressions:
 Identifiers: [a-zA-Z_][a-zA-Z0-9_]*
 Numbers:
