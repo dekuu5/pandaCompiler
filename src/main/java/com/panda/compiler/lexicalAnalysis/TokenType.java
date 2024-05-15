@@ -43,7 +43,7 @@ public enum TokenType {
     OR,
     AND,
     NOT,
-    XOR,
+
     FALSE,
     TRUE,
     EOF,

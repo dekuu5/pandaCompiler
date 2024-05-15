@@ -30,6 +30,7 @@ public class Toknizer {
         keywords.put("true",   TRUE);
         keywords.put("let",    LET);
         keywords.put("while",  WHILE);
+
     }
 
 
