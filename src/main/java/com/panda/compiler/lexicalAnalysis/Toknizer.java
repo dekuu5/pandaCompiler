@@ -30,6 +30,21 @@ public class Toknizer {
         keywords.put("true",   TRUE);
         keywords.put("let",    LET);
         keywords.put("while",  WHILE);
+        keywords.put("break",  BREAK);
+        keywords.put("continue", CONTINUE);
+
+    }
+    static HashMap<String,TokenType> typeSpecifier;
+    static {
+        typeSpecifier = new HashMap<>();
+        typeSpecifier.put("int", INT);
+        typeSpecifier.put("float", FLOAT);
+        typeSpecifier.put("double", BOOL);
+        typeSpecifier.put("char", CHAR);
+        typeSpecifier.put("void", VOID);
+        typeSpecifier.put("str", STR);
+        typeSpecifier.put("uint", UINT);
+
 
     }
 
@@ -83,10 +98,34 @@ public class Toknizer {
                 }else
                     addToken(DIV);
                 break;
-
-
-            case ' ':
-
+            case ':':
+                addToken(COLON);
+                break;
+            case'[':
+                addToken(LBRACKET);
+                break;
+            case ']':
+                addToken(RBRACKET);
+                break;
+            case ',':
+                addToken(COMMA);
+                break;
+            case ';':
+                addToken(SEMICOLON);
+                break;
+            case '(':
+                addToken(LPARENTHESIS);
+                break;
+            case ')':
+                addToken(RPARENTHESIS);
+                break;
+            case '{':
+                addToken(LCURLYBRACKET);
+                break;
+            case '}':
+                addToken(RCURLYBRACKET);
+                break;
+            case ' ': // Ignore whitespace.
             case '\r':
             case '\t':
                 // Ignore whitespace.
@@ -105,6 +144,7 @@ public class Toknizer {
                 } else if (isAlpha(c)) {
                     identifier();
                 } else {//hand the error part
+                    addToken(UNKNOWN);
                     System.out.println("error message"+ c + line);
                 }
                 break;
@@ -118,7 +158,12 @@ public class Toknizer {
         while (isAlphaNumeric(peek())) advance();
         String text = source.substring(start,current);
         TokenType type = keywords.get(text);
-        if (type == null) type = IDENTIFIER;
+        if (type == null) {
+            type = typeSpecifier.get(text);
+            if (type == null) {
+                type = IDENTIFIER;
+            }
+        }
         addToken(type);
     }
 
