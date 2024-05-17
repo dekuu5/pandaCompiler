@@ -2,7 +2,6 @@ package com.panda.compiler.syntaxAnalysis;
 
 import com.panda.compiler.lexicalAnalysis.Token;
 import com.panda.compiler.lexicalAnalysis.TokenType;
-import com.panda.compiler.lexicalAnalysis.Toknizer;
 
 import java.util.List;
 
@@ -14,42 +13,10 @@ public class Parser {
     }
     public void parse() {
         while (!isAtEnd()) {
-            externalDeclaration();
+         //   externalDeclaration();
         }
     }
 
-    // Parses an external declaration
-    private void externalDeclaration() {
-        if (match(TokenType.FN)) {
-            functionDefinition();
-        } else {
-            declaration();
-        }
-    }
-
-    // Parses a function definition
-    private void functionDefinition() {
-        while (!check(TokenType.LEFT_BRACE)) {
-            declarationSpecifier();
-        }
-        // Parse the rest of the function definition
-    }
-
-    // Parses a declaration specifier
-    private void declarationSpecifier() {
-        if (match(TokenType.TYPE_SPECIFIER)) {
-            // Parse type specifier
-        } else if (match(TokenType.STORAGE_CLASS_SPECIFIER)) {
-            // Parse storage class specifier
-        } else if (match(TokenType.TYPE_QUALIFIER)) {
-            // Parse type qualifier
-        }
-    }
-
-    // Parses a declaration
-    private void declaration() {
-
-    }
 
     // Utility methods for parsing
     private boolean match(TokenType... types) {
@@ -67,9 +34,8 @@ public class Parser {
         return peek().type() == type;
     }
 
-    private Token advance() {
+    private void advance() {
         if (!isAtEnd()) current++;
-        return previous();
     }
 
     private boolean isAtEnd() {

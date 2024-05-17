@@ -21,12 +21,14 @@ public enum TokenType {
     //OPREATORS
 
 
-    PARENTHESIS,
+
     SEMICOLON,
     ASSIGNMENT,
 
-    CURLYBRACKET,
-    BRACKET,
+    COMMA,
+    COLON,
+    LBRACKET,
+    RBRACKET,
 
     PLUS,
     MINUS,
@@ -47,7 +49,14 @@ public enum TokenType {
     FALSE,
     TRUE,
     EOF,
-    UNKNOWN
+    INT,
+    FLOAT,
+    CHAR,
+    BOOL,
+    UINT,
+    STR ,
+    VOID,
+    RPARENTHESIS, LPARENTHESIS, LCURLYBRACKET, RCURLYBRACKET, UNKNOWN
 
 
 
