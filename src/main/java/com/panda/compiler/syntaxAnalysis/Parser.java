@@ -6,8 +6,10 @@ import com.panda.compiler.lexicalAnalysis.TokenType;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.panda.compiler.lexicalAnalysis.TokenType.*;
+
 public class Parser {
-    private List<Token> tokens;
+     private final List<Token> tokens;
     private int current = 0;
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
@@ -44,7 +46,18 @@ public class Parser {
         List<ParameterDeclaration> parameters = parseParameterList();
         consumeToken(TokenType.RPARENTHESIS);
         CompoundStatement compoundStatement = parseCompoundStatement();
-        return new ExternalDeclaration.FunctionDefinition(identifier, parameters, compoundStatement);
+        return new ExternalDeclaration.FunctionDefinition(identifier, (ParameterList) parameters, compoundStatement);
+    }
+
+    private CompoundStatement parseCompoundStatement() {
+
+    }
+
+    private List<ParameterDeclaration> parseParameterList() {
+    }
+
+    private Identifier parseIdentifier() {
+
     }
 
     private ExternalDeclaration.VariableDeclaration parseVariableDeclaration() {
@@ -58,10 +71,23 @@ public class Parser {
         return new ExternalDeclaration.VariableDeclaration(declarator, typeSpecifier, expression);
     }
 
+    private Expression parseExpression() {
+
+
+    }
+
+    private TypeSpecifier parseTypeSpecifier() {
+        if (match(TokenType.INT, TokenType.FLOAT, TokenType.CHAR, TokenType.BOOL, TokenType.UINT, TokenType.STR, TokenType.VOID)) {
+            return new TypeSpecifier(previous().type());
+        }
+
+      return  error( peek(), "Expected type specifier, found: " + peek());
+    }
+
     private Declarator parseDeclarator() {
         Token nextToken = consumeNextToken();
         if (nextToken.type() != TokenType.IDENTIFIER) {
-            throw new RuntimeException("Expected an identifier, found: " + nextToken);
+         return  error(nextToken, "Expected identifier, found: " + nextToken);
         }
         return new Declarator(new Identifier(nextToken.value()));
     }
@@ -80,12 +106,14 @@ public class Parser {
     private void consumeToken(TokenType type) {
         Token nextToken = consumeNextToken();
         if (nextToken.type() != type) {
-            throw new RuntimeException("Expected token of type " + type + ", found: " + nextToken);
+             error(nextToken, "Expected token of type " + type + ", found: " + nextToken);
         }
     }
+
+
     private Token consumeNextToken() {
         if (current >= tokens.size()) {
-            throw new RuntimeException("Unexpected end of input");
+            error(previous(), "Unexpected end of input");
         }
         return tokens.get(current++);
     }
@@ -114,6 +142,10 @@ public class Parser {
 
     private Token previous() {
         return tokens.get(current - 1);
+    }
+
+    private  <R> R error(Token token, String message) {
+        throw new RuntimeException("Error at token " + token + ": " + message);
     }
 
 }
