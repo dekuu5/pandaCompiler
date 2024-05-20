@@ -1,6 +1,7 @@
 package com.panda.compiler.syntaxAnalysis;
 
 import com.panda.compiler.lexicalAnalysis.Token;
+import com.panda.compiler.lexicalAnalysis.TokenType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -121,7 +122,7 @@ class Declarator extends GrammarRules   {
 }
 class TypeSpecifier extends GrammarRules {
     final Token keyword;
-    TypeSpecifier(Token keyword) {
+    TypeSpecifier(TokenType keyword) {
         this.keyword = keyword;
     }
     @Override
@@ -381,7 +382,7 @@ abstract class Expression extends GrammarRules {
         }
     }
 }
-class Identifier extends GrammarRules {
+ class Identifier extends GrammarRules {
     String name;
     Identifier(String name) {
         this.name = name;
