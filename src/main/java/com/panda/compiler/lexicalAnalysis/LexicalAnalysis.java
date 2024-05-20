@@ -78,8 +78,8 @@ public class LexicalAnalysis {
                     tokens.add(new Token(getTokenType(value.toString()), value.toString(), lineNumber, columnNumber));
                     columnNumber += value.length();
                 }else {
-                  TokenType type = getSpecialCharacterType(currentChar);
-                  tokens.add(new Token(type, String.valueOf(currentChar), lineNumber, columnNumber));
+//                  TokenType type = getSpecialCharacterType(currentChar);
+                  tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(currentChar), lineNumber, columnNumber));
                   columnNumber++;
                   i++;
                 }
@@ -105,15 +105,15 @@ public class LexicalAnalysis {
         }
     }
 
-    private TokenType getSpecialCharacterType(char currentChar) {
-        return switch (currentChar) {
-            case '+', '-', '*', '/' -> TokenType.OPERATOR;
-            case '(', ')' -> TokenType.PARENTHESIS;
-            case ';' -> TokenType.SEMICOLON;
-            case '=' -> TokenType.ASSIGNMENT;
-            default -> TokenType.UNKNOWN;
-        };
-    }
+//    private TokenType getSpecialCharacterType(char currentChar) {
+//        return switch (currentChar) {
+//            case '+', '-', '*', '/' -> TokenType.OPERATOR;
+//            case '(', ')' -> TokenType.PARENTHESIS;
+//            case ';' -> TokenType.SEMICOLON;
+//            case '=' -> TokenType.ASSIGNMENT;
+//            default -> TokenType.UNKNOWN;
+//        };
+//    }
     private boolean isThisCommentLine(String line){
         int i =0;
         char currentChar;

@@ -1,20 +1,6 @@
-fn main() {
-    // Single-line comment
-    /*
-    *  Multi-line comment
-    */
-    let x5: int = 5;
-    let y: float = 5.0;
-    let ww = "nice string qowow 12121 @@ 3#$$44";
-    let m=21;
+let x = 5
 
-    m=33;
+let y == 22
 
-    if x == y {
-
-
-        print(x + y);
-    }
-}
-
+let wqw == 22.22
 
