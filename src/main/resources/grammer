@@ -40,6 +40,8 @@
               | <expression-statement>
               |<print-statement>
               |<input-statement>
+              |<Assignment-statement>
+<Assignment-statement> ::= <declarator> '=' <expression> ';'
 
 <print-statement> ::= 'print' '(' <expression> ')' ';'
 
