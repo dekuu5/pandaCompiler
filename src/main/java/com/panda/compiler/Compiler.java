@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Compiler {
-//    LexicalAnalysis lexicalAnalysis;
+    //    LexicalAnalysis lexicalAnalysis;
     Toknizer toknizer;
 
     String sourse;

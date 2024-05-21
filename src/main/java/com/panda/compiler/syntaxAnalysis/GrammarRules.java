@@ -21,11 +21,11 @@ class TranslationUnit extends GrammarRules {
         return visitor.visitTranslationUnit(this);
     }
 }
-    abstract class ExternalDeclaration extends GrammarRules {
-         static class FunctionDefinition extends ExternalDeclaration {
-            final Identifier identifier;
-             final ParameterList parameters;
-             final CompoundStatement compoundStatement;
+abstract class ExternalDeclaration extends GrammarRules {
+    static class FunctionDefinition extends ExternalDeclaration {
+        final Identifier identifier;
+        final ParameterList parameters;
+        final CompoundStatement compoundStatement;
         FunctionDefinition(Identifier identifier , ParameterList parameters, CompoundStatement compoundStatement) {
             this.identifier = identifier;
             this.parameters = parameters;
@@ -42,36 +42,36 @@ class TranslationUnit extends GrammarRules {
             return visitor.visitFunctionDefinition(this);
         }
     }
-         static class VariableDeclaration extends ExternalDeclaration {
-             Declarator declarator;
-             TypeSpecifier typeSpecifier;
-             Expression expression;
-                VariableDeclaration(Declarator declarator, TypeSpecifier typeSpecifier, Expression expression) {
-                    this.declarator = declarator;
-                    this.typeSpecifier = typeSpecifier;
-                    this.expression = expression;
-                }
-
-             @Override
-         public <R> R accept(RulesVisitor<R> visitor) {
-            return visitor.visitDeclarationSpecifier(this);
-         }
-    }
-    }
-    class Declaration extends GrammarRules {
-        final TypeSpecifier typeSpecifier;
-        final Declarator declarator;
-        final Expression expression;
-        Declaration(TypeSpecifier typeSpecifier, Declarator declarator, Expression expression) {
-            this.typeSpecifier = typeSpecifier;
+    static class VariableDeclaration extends ExternalDeclaration {
+        Declarator declarator;
+        TypeSpecifier typeSpecifier;
+        Expression expression;
+        VariableDeclaration(Declarator declarator, TypeSpecifier typeSpecifier, Expression expression) {
             this.declarator = declarator;
+            this.typeSpecifier = typeSpecifier;
             this.expression = expression;
         }
+
         @Override
         public <R> R accept(RulesVisitor<R> visitor) {
-            return visitor.visitDeclaration(this);
+            return visitor.visitDeclarationSpecifier(this);
         }
     }
+}
+class Declaration extends GrammarRules {
+    final TypeSpecifier typeSpecifier;
+    final Declarator declarator;
+    final Expression expression;
+    Declaration(TypeSpecifier typeSpecifier, Declarator declarator, Expression expression) {
+        this.typeSpecifier = typeSpecifier;
+        this.declarator = declarator;
+        this.expression = expression;
+    }
+    @Override
+    public <R> R accept(RulesVisitor<R> visitor) {
+        return visitor.visitDeclaration(this);
+    }
+}
 
 
 class ParameterList extends GrammarRules {
@@ -143,266 +143,266 @@ class CompoundStatement extends GrammarRules {
 
 abstract class Statement extends GrammarRules {}
 
-    class VariableDeclarationStatement extends Statement {
-        ExternalDeclaration.VariableDeclaration declaration;
+class VariableDeclarationStatement extends Statement {
+    ExternalDeclaration.VariableDeclaration declaration;
 
-        VariableDeclarationStatement(ExternalDeclaration.VariableDeclaration declaration) {
-            this.declaration = declaration;
-        }
-        @Override
-        public <R> R accept(RulesVisitor<R> visitor) {
-                return visitor.visitVariableDeclarationStatement(this);
-        }
-
+    VariableDeclarationStatement(ExternalDeclaration.VariableDeclaration declaration) {
+        this.declaration = declaration;
     }
-    class AssignmentStatement extends Statement {
-        Declarator declarator;
-        Expression expression;
-        AssignmentStatement(Declarator declarator, Expression expression) {
-            this.declarator = declarator;
+    @Override
+    public <R> R accept(RulesVisitor<R> visitor) {
+        return visitor.visitVariableDeclarationStatement(this);
+    }
+
+}
+class AssignmentStatement extends Statement {
+    Declarator declarator;
+    Expression expression;
+    AssignmentStatement(Declarator declarator, Expression expression) {
+        this.declarator = declarator;
+        this.expression = expression;
+    }
+    @Override
+    public <R> R accept(RulesVisitor<R> visitor) {
+        return visitor.visitAssignmentStatement(this);
+    }
+}
+
+class JumpStatement extends Statement {
+    TokenType keyword;
+    Expression expression;
+    JumpStatement(TokenType keyword, Expression expression) {
+        this.keyword = keyword;
+        this.expression = expression;
+    }
+    JumpStatement(TokenType keyword) {
+        this.keyword = keyword;
+        this.expression = null;
+    }
+
+    public <R> R accept(RulesVisitor<R> visitor) {
+        return visitor.visitJumpStatement(this);
+    }
+
+}
+
+abstract class ControlFlowStatement extends Statement {
+    static class If extends ControlFlowStatement {
+        final Expression condition;
+        final CompoundStatement statement;
+        final CompoundStatement elseStatement;
+
+        If(Expression condition, CompoundStatement statement, CompoundStatement elseStatement) {
+            this.condition = condition;
+            this.statement = statement;
+            this.elseStatement = elseStatement;
+        }
+
+        If(Expression condition, CompoundStatement statement) {
+            this.condition = condition;
+            this.statement = statement;
+            this.elseStatement = null;
+        }
+
+        public <R> R accept(RulesVisitor<R> visitor) {
+            return visitor.visitIFStatement(this);
+        }
+    }
+
+    static class Switch extends ControlFlowStatement {
+        final Expression expression;
+        final HashMap<Constant,Statement> caseStatements;
+        final Statement defaultStatement;
+        Switch(Expression expression, HashMap<Constant,Statement> caseStatements, Statement defaultStatement) {
             this.expression = expression;
-        }
-        @Override
-        public <R> R accept(RulesVisitor<R> visitor) {
-            return visitor.visitAssignmentStatement(this);
-        }
-    }
-
-    class JumpStatement extends Statement {
-        TokenType keyword;
-        Expression expression;
-        JumpStatement(TokenType keyword, Expression expression) {
-            this.keyword = keyword;
-            this.expression = expression;
-        }
-        JumpStatement(TokenType keyword) {
-            this.keyword = keyword;
-            this.expression = null;
-        }
-
-        public <R> R accept(RulesVisitor<R> visitor) {
-            return visitor.visitJumpStatement(this);
-        }
-
-    }
-
-    abstract class ControlFlowStatement extends Statement {
-        static class If extends ControlFlowStatement {
-            final Expression condition;
-            final CompoundStatement statement;
-            final CompoundStatement elseStatement;
-
-            If(Expression condition, CompoundStatement statement, CompoundStatement elseStatement) {
-                this.condition = condition;
-                this.statement = statement;
-                this.elseStatement = elseStatement;
-            }
-
-            If(Expression condition, CompoundStatement statement) {
-                this.condition = condition;
-                this.statement = statement;
-                this.elseStatement = null;
-            }
-
-            public <R> R accept(RulesVisitor<R> visitor) {
-                return visitor.visitIFStatement(this);
-            }
-        }
-
-        static class Switch extends ControlFlowStatement {
-            final Expression expression;
-            final HashMap<Constant,Statement> caseStatements;
-            final Statement defaultStatement;
-            Switch(Expression expression, HashMap<Constant,Statement> caseStatements, Statement defaultStatement) {
-                this.expression = expression;
-                this.caseStatements = caseStatements;
-                this.defaultStatement = defaultStatement;
-            }
-            public <R> R accept(RulesVisitor<R> visitor) {
-                return visitor.visitSwitchStatement(this);
-            }
-
-        }
-
-        static class While extends ControlFlowStatement {
-            final Expression condition;
-            final CompoundStatement statement;
-            While(Expression condition, CompoundStatement statement) {
-                this.condition = condition;
-                this.statement = statement;
-            }
-            public <R> R accept(RulesVisitor<R> visitor) {
-                return visitor.visitWhileStatement(this);
-            }
-        }
-
-        static class For extends ControlFlowStatement {
-            final Statement initialization;
-            final Expression condition;
-            final Statement increment;
-            final CompoundStatement statement;
-            For(Statement initialization, Expression condition, Statement increment, CompoundStatement statement) {
-                this.initialization = initialization;
-                this.condition = condition;
-                this.increment = increment;
-                this.statement = statement;
-            }
-            public <R> R accept(RulesVisitor<R> visitor) {
-                return visitor.visitForStatement(this);
-            }
-        }
-    }
-    class ExpressionStatement extends Statement {
-        Expression expression;
-        ExpressionStatement(Expression expression) {
-            this.expression = expression;
-        }
-        @Override
-        public <R> R accept(RulesVisitor<R> visitor) {
-            return visitor.visitExpressionStatement(this);
-        }
-    }
-
-    class PrintStatement extends Statement {
-        public PrintStatement(Expression expression) {
-            super();
+            this.caseStatements = caseStatements;
+            this.defaultStatement = defaultStatement;
         }
         public <R> R accept(RulesVisitor<R> visitor) {
-            return visitor.visitPrintStatement(this);
+            return visitor.visitSwitchStatement(this);
+        }
+
+    }
+
+    static class While extends ControlFlowStatement {
+        final Expression condition;
+        final CompoundStatement statement;
+        While(Expression condition, CompoundStatement statement) {
+            this.condition = condition;
+            this.statement = statement;
+        }
+        public <R> R accept(RulesVisitor<R> visitor) {
+            return visitor.visitWhileStatement(this);
         }
     }
+
+    static class For extends ControlFlowStatement {
+        final Statement initialization;
+        final Expression condition;
+        final Statement increment;
+        final CompoundStatement statement;
+        For(Statement initialization, Expression condition, Statement increment, CompoundStatement statement) {
+            this.initialization = initialization;
+            this.condition = condition;
+            this.increment = increment;
+            this.statement = statement;
+        }
+        public <R> R accept(RulesVisitor<R> visitor) {
+            return visitor.visitForStatement(this);
+        }
+    }
+}
+class ExpressionStatement extends Statement {
+    Expression expression;
+    ExpressionStatement(Expression expression) {
+        this.expression = expression;
+    }
+    @Override
+    public <R> R accept(RulesVisitor<R> visitor) {
+        return visitor.visitExpressionStatement(this);
+    }
+}
+
+class PrintStatement extends Statement {
+    public PrintStatement(Expression expression) {
+        super();
+    }
+    public <R> R accept(RulesVisitor<R> visitor) {
+        return visitor.visitPrintStatement(this);
+    }
+}
 
 abstract class Expression extends GrammarRules {}
-     class LogicalExpression extends Expression {
-        LogicalTerm firstTerm;
-        TokenType operator;
-        LogicalTerm term;
+class LogicalExpression extends Expression {
+    LogicalTerm firstTerm;
+    TokenType operator;
+    LogicalTerm term;
 
-        LogicalExpression(LogicalTerm firstTerm, TokenType operator, LogicalTerm term) {
-            this.firstTerm = firstTerm;
-            this.operator = operator;
-            this.term = term;
-        }
-        @Override
-        public <R> R accept(RulesVisitor<R> visitor) {
-            return visitor.visitLogicalExpression(this);
-        }
-        
+    LogicalExpression(LogicalTerm firstTerm, TokenType operator, LogicalTerm term) {
+        this.firstTerm = firstTerm;
+        this.operator = operator;
+        this.term = term;
+    }
+    @Override
+    public <R> R accept(RulesVisitor<R> visitor) {
+        return visitor.visitLogicalExpression(this);
     }
 
-    // Logical term node
-     class LogicalTerm extends Expression {
-        Comparison firstComparison;
-        Token operator;
-        Comparison comparison;
+}
 
-        LogicalTerm(Comparison firstComparison, Token operator, Comparison comparison) {
-            this.firstComparison = firstComparison;
-            this.operator = operator;
-            this.comparison = comparison;
-        }
-        public <R> R accept(RulesVisitor<R> visitor) {
-            return visitor.visitLogicalTerm(this);
-        }
+// Logical term node
+class LogicalTerm extends Expression {
+    Comparison firstComparison;
+    Token operator;
+    Comparison comparison;
+
+    LogicalTerm(Comparison firstComparison, Token operator, Comparison comparison) {
+        this.firstComparison = firstComparison;
+        this.operator = operator;
+        this.comparison = comparison;
+    }
+    public <R> R accept(RulesVisitor<R> visitor) {
+        return visitor.visitLogicalTerm(this);
+    }
+}
+
+// Comparison node
+class Comparison extends Expression {
+    AdditiveExpression left;
+    Token operator;
+    AdditiveExpression right;
+
+    Comparison(AdditiveExpression left, Token operator, AdditiveExpression right) {
+        this.left = left;
+        this.operator = operator;
+        this.right = right;
     }
 
-    // Comparison node
-     class Comparison extends Expression {
-        AdditiveExpression left;
-        Token operator;
-        AdditiveExpression right;
+    @Override
+    public <R> R accept(RulesVisitor<R> visitor) {
+        return visitor.visitComparison(this);
+    }
+}
 
-        Comparison(AdditiveExpression left, Token operator, AdditiveExpression right) {
-            this.left = left;
-            this.operator = operator;
-            this.right = right;
-        }
+// Additive expression node
+class AdditiveExpression extends Expression {
+    MultiplicativeExpression left;
+    Token operator;
+    MultiplicativeExpression right;
 
-        @Override
-        public <R> R accept(RulesVisitor<R> visitor) {
-            return visitor.visitComparison(this);
-        }
+    AdditiveExpression(MultiplicativeExpression left, Token operator, MultiplicativeExpression right) {
+        this.left = left;
+        this.operator = operator;
+        this.right = right;
     }
 
-    // Additive expression node
-     class AdditiveExpression extends Expression {
-        MultiplicativeExpression left;
-        Token operator;
-        MultiplicativeExpression right;
+    @Override
+    public <R> R accept(RulesVisitor<R> visitor) {
+        return visitor.visitAdditiveExpression(this);
+    }
+}
 
-        AdditiveExpression(MultiplicativeExpression left, Token operator, MultiplicativeExpression right) {
-            this.left = left;
-            this.operator = operator;
-            this.right = right;
-        }
+// Multiplicative expression node
+class MultiplicativeExpression extends Expression {
+    UnaryExpression left;
+    Token operator;
+    UnaryExpression right;
 
-        @Override
-        public <R> R accept(RulesVisitor<R> visitor) {
-            return visitor.visitAdditiveExpression(this);
-        }
+    MultiplicativeExpression(UnaryExpression left, Token operator, UnaryExpression right) {
+        this.left = left;
+        this.operator = operator;
+        this.right = right;
     }
 
-    // Multiplicative expression node
-     class MultiplicativeExpression extends Expression {
-        UnaryExpression left;
-        Token operator;
-        UnaryExpression right;
+    @Override
+    public <R> R accept(RulesVisitor<R> visitor) {
+        return visitor.visitMultiplicativeExpression(this);
+    }
+}
 
-        MultiplicativeExpression(UnaryExpression left, Token operator, UnaryExpression right) {
-            this.left = left;
-            this.operator = operator;
-            this.right = right;
-        }
+class UnaryExpression extends Expression {
+    PrimaryExpression expression;
+    Token operator;
 
-        @Override
-        public <R> R accept(RulesVisitor<R> visitor) {
-            return visitor.visitMultiplicativeExpression(this);
-        }
+    UnaryExpression(PrimaryExpression expression, Token operator) {
+        this.expression = expression;
+        this.operator = operator;
     }
 
-     class UnaryExpression extends Expression {
-        PrimaryExpression expression;
-        Token operator;
+    @Override
+    public <R> R accept(RulesVisitor<R> visitor) {
+        return visitor.visitUnaryExpression(this);
+    }
+}
 
-        UnaryExpression(PrimaryExpression expression, Token operator) {
-            this.expression = expression;
-            this.operator = operator;
-        }
 
-        @Override
-        public <R> R accept(RulesVisitor<R> visitor) {
-            return visitor.visitUnaryExpression(this);
-        }
+class PrimaryExpression extends Expression {
+    final String identifier; // Can be null if it's not an identifier
+    final Constant constant; // Can be null if it's not a constant
+    final Expression subExpression;
+    PrimaryExpression(String identifier) {
+        this.identifier = identifier;
+        this.constant = null;
+        this.subExpression = null;
+    }
+    PrimaryExpression(Constant constant) {
+        this.identifier = null;
+        this.constant = constant;
+        this.subExpression = null;
+    }
+    PrimaryExpression(Expression subExpression) {
+        this.identifier = null;
+        this.constant = null;
+        this.subExpression = subExpression;
     }
 
-
-     class PrimaryExpression extends Expression {
-        final String identifier; // Can be null if it's not an identifier
-        final Constant constant; // Can be null if it's not a constant
-        final Expression subExpression;
-        PrimaryExpression(String identifier) {
-            this.identifier = identifier;
-            this.constant = null;
-            this.subExpression = null;
-        }
-        PrimaryExpression(Constant constant) {
-            this.identifier = null;
-            this.constant = constant;
-            this.subExpression = null;
-        }
-        PrimaryExpression(Expression subExpression) {
-            this.identifier = null;
-            this.constant = null;
-            this.subExpression = subExpression;
-        }
-
-        @Override
-        public <R> R accept(RulesVisitor<R> visitor) {
-            return visitor.visitPrimaryExpression(this);
-        }
+    @Override
+    public <R> R accept(RulesVisitor<R> visitor) {
+        return visitor.visitPrimaryExpression(this);
     }
+}
 
- class Identifier extends GrammarRules {
+class Identifier extends GrammarRules {
     String name;
     Identifier(String name) {
         this.name = name;
@@ -469,6 +469,5 @@ abstract class Constant extends GrammarRules{
             return visitor.visitBooleanConstant(this);
         }
     }
-        
-    }
 
+}
