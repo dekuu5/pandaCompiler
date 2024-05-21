@@ -64,10 +64,10 @@ public class Toknizer {
     }
 
     /*
-    * this function is the driver for the tokenizer
-    * it takes char than switch all possible scenarios
-    *
-    * */
+     * this function is the driver for the tokenizer
+     * it takes char than switch all possible scenarios
+     *
+     * */
     private void scanToken() {
         char c = advance();
         switch (c){
@@ -180,7 +180,7 @@ public class Toknizer {
             advance();
             while(isDigit(peek())) advance();
         }
-            addToken(NUMBER,
+        addToken(NUMBER,
                 Double.parseDouble(source.substring(start, current)));
 
     }
@@ -249,11 +249,11 @@ public class Toknizer {
     private char peek(){
         return source.charAt(current);
     }
-   private char peekNext(){
+    private char peekNext(){
         if(current+1<source.length()){
             return source.charAt(current+1);
         } else return '\0';
-   }
+    }
     private void addToken(TokenType t){
         addToken(t, null);
     }
