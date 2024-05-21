@@ -3,7 +3,6 @@ package com.panda.compiler.syntaxAnalysis;
 import com.panda.compiler.lexicalAnalysis.Token;
 import com.panda.compiler.lexicalAnalysis.TokenType;
 
-import java.util.HashMap;
 import java.util.List;
 
 public abstract class GrammarRules {
@@ -21,8 +20,8 @@ class TranslationUnit extends GrammarRules {
         return visitor.visitTranslationUnit(this);
     }
 }
-    abstract class ExternalDeclaration extends GrammarRules {
-         static class FunctionDefinition extends ExternalDeclaration {
+    abstract class ExternalDeclaration extends GrammarRules {}
+          class FunctionDefinition extends ExternalDeclaration {
             final Identifier identifier;
              final ParameterList parameters;
              final CompoundStatement compoundStatement;
@@ -42,7 +41,7 @@ class TranslationUnit extends GrammarRules {
             return visitor.visitFunctionDefinition(this);
         }
     }
-         static class VariableDeclaration extends ExternalDeclaration {
+          class VariableDeclaration extends ExternalDeclaration {
              Declarator declarator;
              TypeSpecifier typeSpecifier;
              Expression expression;
@@ -57,7 +56,7 @@ class TranslationUnit extends GrammarRules {
             return visitor.visitDeclarationSpecifier(this);
          }
     }
-    }
+
     class Declaration extends GrammarRules {
         final TypeSpecifier typeSpecifier;
         final Declarator declarator;
@@ -99,22 +98,15 @@ class ParameterDeclaration extends GrammarRules {
 }
 class Declarator extends GrammarRules   {
     final Identifier identifier;
-    final Declarator declarator;
-    final int size;
+    final Constant.IntegerConstant size;
     Declarator(Identifier identifier) {
         this.identifier = identifier;
-        this.declarator = null;
-        this.size = 0;
+        this.size = null;
     }
-    Declarator(Declarator declarator, int size) {
-        this.identifier = null;
-        this.declarator = declarator;
+    Declarator(Identifier identifier, Constant.IntegerConstant size) {
+        this.identifier = identifier;
         this.size = size;
     }
-    Declarator(Declarator declarator) {
-        this(declarator, 0);
-    }
-
     @Override
     public <R> R accept(RulesVisitor<R> visitor) {
         return visitor.visitDeclarator(this);
@@ -142,24 +134,11 @@ class CompoundStatement extends GrammarRules {
 }
 
 abstract class Statement extends GrammarRules {}
-
-    class VariableDeclarationStatement extends Statement {
-        ExternalDeclaration.VariableDeclaration declaration;
-
-        VariableDeclarationStatement(ExternalDeclaration.VariableDeclaration declaration) {
-            this.declaration = declaration;
-        }
-        @Override
-        public <R> R accept(RulesVisitor<R> visitor) {
-                return visitor.visitVariableDeclarationStatement(this);
-        }
-
-    }
-    class AssignmentStatement extends Statement {
+  class AssignmentStatement extends Statement {
         Declarator declarator;
         Expression expression;
         AssignmentStatement(Declarator declarator, Expression expression) {
-            this.declarator = declarator;
+           this.declarator = declarator;
             this.expression = expression;
         }
         @Override
@@ -209,20 +188,20 @@ abstract class Statement extends GrammarRules {}
             }
         }
 
-        static class Switch extends ControlFlowStatement {
-            final Expression expression;
-            final HashMap<Constant,Statement> caseStatements;
-            final Statement defaultStatement;
-            Switch(Expression expression, HashMap<Constant,Statement> caseStatements, Statement defaultStatement) {
-                this.expression = expression;
-                this.caseStatements = caseStatements;
-                this.defaultStatement = defaultStatement;
-            }
-            public <R> R accept(RulesVisitor<R> visitor) {
-                return visitor.visitSwitchStatement(this);
-            }
-
-        }
+//        static class Switch extends ControlFlowStatement {
+//            final Expression expression;
+//            final HashMap<Constant,Statement> caseStatements;
+//            final Statement defaultStatement;
+//            Switch(Expression expression, HashMap<Constant,Statement> caseStatements, Statement defaultStatement) {
+//                this.expression = expression;
+//                this.caseStatements = caseStatements;
+//                this.defaultStatement = defaultStatement;
+//            }
+//            public <R> R accept(RulesVisitor<R> visitor) {
+//                return visitor.visitSwitchStatement(this);
+//            }
+//
+//        }
 
         static class While extends ControlFlowStatement {
             final Expression condition;
@@ -239,7 +218,7 @@ abstract class Statement extends GrammarRules {}
         static class For extends ControlFlowStatement {
             final Statement initialization;
             final Expression condition;
-            final Statement increment;
+            final Expression increment;
             final CompoundStatement statement;
             For(Statement initialization, Expression condition, Expression increment, CompoundStatement statement) {
                 this.initialization = initialization;
@@ -269,6 +248,14 @@ abstract class Statement extends GrammarRules {}
         }
         public <R> R accept(RulesVisitor<R> visitor) {
             return visitor.visitPrintStatement(this);
+        }
+    }
+    class InputStatement extends Statement {
+        public  InputStatement() {
+
+        }
+        public <R> R accept(RulesVisitor<R> visitor) {
+            return visitor.visitInputStatement(this);
         }
     }
 
@@ -309,10 +296,10 @@ abstract class Expression extends GrammarRules {}
     // Comparison node
      class Comparison extends Expression {
         AdditiveExpression left;
-        Token operator;
+        TokenType operator;
         AdditiveExpression right;
 
-        Comparison(AdditiveExpression left, Token operator, AdditiveExpression right) {
+        Comparison(AdditiveExpression left, TokenType operator, AdditiveExpression right) {
             this.left = left;
             this.operator = operator;
             this.right = right;
@@ -327,10 +314,10 @@ abstract class Expression extends GrammarRules {}
     // Additive expression node
      class AdditiveExpression extends Expression {
         MultiplicativeExpression left;
-        Token operator;
+        TokenType operator;
         MultiplicativeExpression right;
 
-        AdditiveExpression(MultiplicativeExpression left, Token operator, MultiplicativeExpression right) {
+        AdditiveExpression(MultiplicativeExpression left, TokenType operator, MultiplicativeExpression right) {
             this.left = left;
             this.operator = operator;
             this.right = right;
@@ -345,10 +332,10 @@ abstract class Expression extends GrammarRules {}
     // Multiplicative expression node
      class MultiplicativeExpression extends Expression {
         UnaryExpression left;
-        Token operator;
+        TokenType operator;
         UnaryExpression right;
 
-        MultiplicativeExpression(UnaryExpression left, Token operator, UnaryExpression right) {
+        MultiplicativeExpression(UnaryExpression left, TokenType operator, UnaryExpression right) {
             this.left = left;
             this.operator = operator;
             this.right = right;
@@ -362,9 +349,9 @@ abstract class Expression extends GrammarRules {}
 
      class UnaryExpression extends Expression {
         PrimaryExpression expression;
-        Token operator;
+        TokenType operator;
 
-        UnaryExpression(PrimaryExpression expression, Token operator) {
+        UnaryExpression(PrimaryExpression expression, TokenType operator) {
             this.expression = expression;
             this.operator = operator;
         }

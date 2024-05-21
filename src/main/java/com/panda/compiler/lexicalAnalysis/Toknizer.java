@@ -32,6 +32,7 @@ public class Toknizer {
         keywords.put("while",  WHILE);
         keywords.put("break",  BREAK);
         keywords.put("continue", CONTINUE);
+        keywords.put("input", INPUT);
 
     }
     static HashMap<String,TokenType> typeSpecifier;

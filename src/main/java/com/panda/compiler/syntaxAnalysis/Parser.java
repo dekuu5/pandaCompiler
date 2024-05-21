@@ -17,7 +17,7 @@ public class Parser {
     }
 
     // Entry point for parsing
-    public TranslationUnit parse() {
+    public GrammarRules parse() {
         return parseTranslationUnit();
     }
 
@@ -39,14 +39,21 @@ public class Parser {
         };
     }
     
-    private ExternalDeclaration.FunctionDefinition parseFunctionDefinition() {
+    private FunctionDefinition parseFunctionDefinition() {
         consumeToken(TokenType.FN);
         Identifier identifier = parseIdentifier();
         consumeToken(TokenType.LPARENTHESIS);
-        List<ParameterDeclaration> parameters = parseParameterList();
+        List<ParameterDeclaration> parameters;
+        if (!check(TokenType.RPARENTHESIS)) {
+            parameters = parseParameterList();
         consumeToken(TokenType.RPARENTHESIS);
         CompoundStatement compoundStatement = parseCompoundStatement();
-        return new ExternalDeclaration.FunctionDefinition(identifier, (ParameterList) parameters, (CompoundStatement) compoundStatement);
+        return new FunctionDefinition(identifier, (ParameterList) parameters, compoundStatement);}
+        else {
+            consumeToken(TokenType.RPARENTHESIS);
+            CompoundStatement compoundStatement = parseCompoundStatement();
+            return new FunctionDefinition(identifier,  compoundStatement);
+        }
     }
 
     private CompoundStatement parseCompoundStatement() {
@@ -72,8 +79,18 @@ public class Parser {
             case BREAK -> parseBreakStatement();
             case CONTINUE -> parseContinueStatement();
             case PRINT -> parsePrintStatement();
+            case IDENTIFIER -> parseAssignmentStatement();
+            case INPUT -> parseInputStatement();
             default -> error(nextToken,"Unexpected token: ");
         };
+    }
+
+    private GrammarRules parseInputStatement() {
+        consumeToken(TokenType.INPUT);
+        consumeToken(TokenType.LPARENTHESIS);
+        consumeToken(TokenType.RPARENTHESIS);
+        consumeToken(TokenType.SEMICOLON);
+        return new InputStatement();
     }
 
     private Statement parsePrintStatement() {
@@ -116,16 +133,51 @@ public class Parser {
     }
 
     private Statement parseAssignmentStatement() {
+        Declarator ide = parseDeclarator();
+        consumeToken(TokenType.ASSIGNMENT);
+        Expression expression = parseExpression();
+        consumeToken(TokenType.SEMICOLON);
+        return new AssignmentStatement(ide, expression);
+
 
     }
 
     private Statement parseWhileStatement() {
+        consumeToken(TokenType.WHILE);
+        consumeToken(TokenType.LPARENTHESIS);
+        Expression condition = parseExpression();
+        consumeToken(TokenType.RPARENTHESIS);
+        GrammarRules body = parseStatement();
+        return new ControlFlowStatement.While(condition, (CompoundStatement) body);
     }
 
     private Statement parseIfStatement() {
+        consumeToken(TokenType.IF);
+        consumeToken(TokenType.LPARENTHESIS);
+        Expression condition = parseExpression();
+        consumeToken(TokenType.RPARENTHESIS);
+        GrammarRules thenBranch = parseStatement();
+        if (match(TokenType.ELSE)) {
+            GrammarRules elseBranch = parseStatement();
+            return new ControlFlowStatement.If(condition, (CompoundStatement) thenBranch, (CompoundStatement) elseBranch);
+        }
+        return new ControlFlowStatement.If(condition, (CompoundStatement) thenBranch);
+
     }
 
     private List<ParameterDeclaration> parseParameterList() {
+        List<ParameterDeclaration> parameters = new ArrayList<>();
+        parameters.add(parseParameterDeclaration());
+        while (match(TokenType.COMMA)) {
+            parameters.add(parseParameterDeclaration());
+        }
+        return parameters;
+    }
+
+    private ParameterDeclaration parseParameterDeclaration() {
+        TypeSpecifier typeSpecifier = parseTypeSpecifier();
+        Declarator declarator = parseDeclarator();
+        return new ParameterDeclaration(typeSpecifier, declarator);
     }
 
     private Identifier parseIdentifier() {
@@ -137,15 +189,19 @@ public class Parser {
 
     }
 
-    private ExternalDeclaration.VariableDeclaration parseVariableDeclaration() {
+    private VariableDeclaration parseVariableDeclaration() {
         consumeToken(TokenType.LET);
         Declarator declarator = parseDeclarator();
         consumeToken(TokenType.COLON);
         TypeSpecifier typeSpecifier = parseTypeSpecifier();
+        if (check(TokenType.SEMICOLON)) {
+            consumeToken(TokenType.SEMICOLON);
+            return new VariableDeclaration(declarator, typeSpecifier, null);
+        }
         consumeToken(TokenType.ASSIGNMENT);
         Expression expression = parseExpression();
         consumeToken(TokenType.SEMICOLON);
-        return new ExternalDeclaration.VariableDeclaration(declarator, typeSpecifier, expression);
+        return new VariableDeclaration(declarator, typeSpecifier, expression);
     }
 
     private Expression parseExpression() {
@@ -156,14 +212,66 @@ public class Parser {
         Expression left =  parseLogicalTerm();
         while (match(TokenType.OR, TokenType.AND)) {
             TokenType operator = previous().type();
-            LogicalTerm right = parseLogicalTerm();
+            Expression right = parseLogicalTerm();
             assert left instanceof LogicalTerm;
-            left = new LogicalExpression((LogicalTerm)left, operator, (LogicalTerm)right);
+            left = new LogicalExpression((LogicalTerm)left, operator, (LogicalTerm) right);
         }
         return left;
     }
 
-    private LogicalTerm parseLogicalTerm() {
+    private Expression parseLogicalTerm() {
+        Expression left = parseAdditiveExpression();        while (match(TokenType.EQUAL, TokenType.NOTEQUAL, TokenType.BIGGER, TokenType.SMALLER, TokenType.BIGGEREQUAL, TokenType.SMALLEREQUAL)) {
+            TokenType operator = previous().type();
+            Expression right = parseAdditiveExpression();
+            left = new Comparison((AdditiveExpression) left, operator, (AdditiveExpression) right);
+        }
+        return left;
+
+    }
+    private Expression parseAdditiveExpression() {
+        Expression left = parseMultiplicativeExpression();
+        while (match(TokenType.PLUS, TokenType.MINUS)) {
+            TokenType operator = previous().type();
+            Expression right = parseMultiplicativeExpression();
+            left = new AdditiveExpression((MultiplicativeExpression) left, operator, (MultiplicativeExpression) right);
+        }
+        return left;
+    }
+
+    private Expression parseMultiplicativeExpression() {
+        Expression left = parsePrimaryExpression();
+        while (match(MULT, DIV, REMINDER)) {
+            TokenType operator = previous().type();
+            Expression right = parsePrimaryExpression();
+            left = new MultiplicativeExpression((UnaryExpression) left, operator, (UnaryExpression) right);
+        }
+        return left;
+    }
+
+
+
+    private Expression parsePrimaryExpression() {
+        if (match(TokenType.IDENTIFIER)) {
+            return new PrimaryExpression(String.valueOf(parseIdentifier()));
+        }
+        if (match(TokenType.NUMBER)) {
+            return new PrimaryExpression(new Constant.IntegerConstant(Integer.parseInt(previous().value())));
+        }
+        if (match(TokenType.FLOAT)) {
+            return new PrimaryExpression(new Constant.FloatConstant(Float.parseFloat(previous().value())));
+        }
+        if (match(TokenType.STRING)) {
+            return new PrimaryExpression(new Constant.StringConstant(previous().value()));
+        }
+        if (match(TokenType.TRUE, TokenType.FALSE)) {
+            return new PrimaryExpression(new Constant.BooleanConstant(previous().type() == TokenType.TRUE));
+        }
+        if (match(TokenType.LPARENTHESIS)) {
+            Expression expression = parseExpression();
+            consumeToken(TokenType.RPARENTHESIS);
+            return expression;
+        }
+        return error(peek(), "Expected primary expression, found: " + peek());
 
     }
 
@@ -179,9 +287,23 @@ public class Parser {
     private Declarator parseDeclarator() {
         Token nextToken = consumeNextToken();
         if (nextToken.type() != TokenType.IDENTIFIER) {
-         return  error(nextToken, "Expected identifier, found: " + nextToken);
+            return error(nextToken, "Expected identifier, found: " + nextToken);
         }
+        if (check(TokenType.LBRACKET)) {
+            consumeToken(TokenType.LBRACKET);
+            if(!check(TokenType.NUMBER)){
+                return error(peek(), "Expected number, found: " + peek());
+            }
+            Constant.IntegerConstant size = parseIntegerConstant(consumeNextToken().value());
+            consumeToken(TokenType.RBRACKET);
+            return new Declarator(new Identifier(nextToken.value()), size);
+        }
+
         return new Declarator(new Identifier(nextToken.value()));
+    }
+
+    private Constant.IntegerConstant parseIntegerConstant(String value) {
+        return new Constant.IntegerConstant(Integer.parseInt(value));
     }
 
 
@@ -198,7 +320,7 @@ public class Parser {
     private void consumeToken(TokenType type) {
         Token nextToken = consumeNextToken();
         if (nextToken.type() != type) {
-             error(nextToken, "Expected token of type " + type + ", found: " + nextToken);
+            error(nextToken, "Expected token of type " + type + ", found: " + nextToken);
         }
     }
 
