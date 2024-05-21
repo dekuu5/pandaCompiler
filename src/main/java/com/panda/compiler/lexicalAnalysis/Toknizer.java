@@ -145,8 +145,10 @@ public class Toknizer {
                 } else if (isAlpha(c)) {
                     identifier();
                 } else {//hand the error part
-                    addToken(UNKNOWN);
-                    System.out.println("error message"+ c + line);
+                    throw new RuntimeException("unknown token type: " + c);
+
+//                    addToken(UNKNOWN);
+//                    System.out.println("error message"+ c + line);
                 }
                 break;
 
