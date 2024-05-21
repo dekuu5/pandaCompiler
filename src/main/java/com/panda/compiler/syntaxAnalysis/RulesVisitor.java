@@ -54,4 +54,8 @@ public interface RulesVisitor<R> {
     R visitAdditiveExpression(Expression.AdditiveExpression additiveExpression);
 
     R visitComparison(Expression.Comparison comparison);
+
+    R visitPrintStatement(Statement.PrintStatement printStatement);
+
+    R visitAssignmentStatement(Statement.AssignmentStatement assignmentStatement);
 }

@@ -50,7 +50,56 @@ public class Parser {
     }
 
     private CompoundStatement parseCompoundStatement() {
+        consumeToken(TokenType.LCURLYBRACKET);
+        List<Statement> statements = new ArrayList<>();
+        while (!check(TokenType.RCURLYBRACKET)) {
+            statements.add(parseStatement());
+        }
+        consumeToken(TokenType.RCURLYBRACKET);
+        return new CompoundStatement(statements);   
+        
 
+    }
+
+    private Statement parseStatement() {
+        Token nextToken = peekNextToken();
+        return switch (nextToken.type()) {
+          //  case LET -> parseVariableDeclaration();
+            case IF -> parseIfStatement();
+            case WHILE -> parseWhileStatement();
+            case FOR -> parseForStatement();
+            case RETURN -> parseReturnStatement();
+            case BREAK -> parseBreakStatement();
+            case CONTINUE -> parseContinueStatement();
+            case PRINT -> parsePrintStatement();
+            default -> error(nextToken,"Unexpected token: ");
+        };
+    }
+
+    private Statement parsePrintStatement() {
+        consumeToken(TokenType.PRINT);
+        consumeToken(TokenType.LPARENTHESIS);
+        Expression expression = parseExpression();
+        consumeToken(TokenType.RPARENTHESIS);
+        return new Statement.PrintStatement(expression);
+    }
+
+    private Statement parseContinueStatement() {
+    }
+
+    private Statement parseBreakStatement() {
+    }
+
+    private Statement parseReturnStatement() {
+    }
+
+    private Statement parseForStatement() {
+    }
+
+    private Statement parseWhileStatement() {
+    }
+
+    private Statement parseIfStatement() {
     }
 
     private List<ParameterDeclaration> parseParameterList() {
@@ -72,8 +121,13 @@ public class Parser {
     }
 
     private Expression parseExpression() {
+        return parseAssignmentExpression();
+      return error(peek(), "Expected expression, found: " + peek());
 
 
+    }
+
+    private Expression parseAssignmentExpression() {
     }
 
     private TypeSpecifier parseTypeSpecifier() {

@@ -121,7 +121,7 @@ class Declarator extends GrammarRules   {
     }
 }
 class TypeSpecifier extends GrammarRules {
-    final Token keyword;
+    final TokenType keyword;
     TypeSpecifier(TokenType keyword) {
         this.keyword = keyword;
     }
@@ -155,7 +155,18 @@ abstract class Statement extends GrammarRules {
         }
 
     }
-
+    static class AssignmentStatement extends Statement {
+        Declarator declarator;
+        Expression expression;
+        AssignmentStatement(Declarator declarator, Expression expression) {
+            this.declarator = declarator;
+            this.expression = expression;
+        }
+        @Override
+        public <R> R accept(RulesVisitor<R> visitor) {
+            return visitor.visitAssignmentStatement(this);
+        }
+    }
 
     static class JumpStatement extends Statement {
         Token keyword;
@@ -249,6 +260,15 @@ abstract class Statement extends GrammarRules {
         @Override
         public <R> R accept(RulesVisitor<R> visitor) {
             return visitor.visitExpressionStatement(this);
+        }
+    }
+
+    public static class PrintStatement extends Statement {
+        public PrintStatement(Expression expression) {
+            super();
+        }
+        public <R> R accept(RulesVisitor<R> visitor) {
+            return visitor.visitPrintStatement(this);
         }
     }
 }
