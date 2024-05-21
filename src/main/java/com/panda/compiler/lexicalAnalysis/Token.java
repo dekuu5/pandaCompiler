@@ -14,4 +14,3 @@ public record Token(TokenType type, String value, Object literal, int line) {
     }
 }
 
-
