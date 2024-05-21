@@ -141,9 +141,9 @@ class CompoundStatement extends GrammarRules {
     }
 }
 
-abstract class Statement extends GrammarRules {
+abstract class Statement extends GrammarRules {}
 
-    static class VariableDeclarationStatement extends Statement {
+    class VariableDeclarationStatement extends Statement {
         ExternalDeclaration.VariableDeclaration declaration;
 
         VariableDeclarationStatement(ExternalDeclaration.VariableDeclaration declaration) {
@@ -155,7 +155,7 @@ abstract class Statement extends GrammarRules {
         }
 
     }
-    static class AssignmentStatement extends Statement {
+    class AssignmentStatement extends Statement {
         Declarator declarator;
         Expression expression;
         AssignmentStatement(Declarator declarator, Expression expression) {
@@ -168,14 +168,14 @@ abstract class Statement extends GrammarRules {
         }
     }
 
-    static class JumpStatement extends Statement {
-        Token keyword;
+    class JumpStatement extends Statement {
+        TokenType keyword;
         Expression expression;
-        JumpStatement(Token keyword, Expression expression) {
+        JumpStatement(TokenType keyword, Expression expression) {
             this.keyword = keyword;
             this.expression = expression;
         }
-        JumpStatement(Token keyword) {
+        JumpStatement(TokenType keyword) {
             this.keyword = keyword;
             this.expression = null;
         }
@@ -186,7 +186,7 @@ abstract class Statement extends GrammarRules {
 
     }
 
-    abstract static class ControlFlowStatement extends Statement {
+    abstract class ControlFlowStatement extends Statement {
         static class If extends ControlFlowStatement {
             final Expression condition;
             final CompoundStatement statement;
@@ -252,7 +252,7 @@ abstract class Statement extends GrammarRules {
             }
         }
     }
-    static class ExpressionStatement extends Statement {
+    class ExpressionStatement extends Statement {
         Expression expression;
         ExpressionStatement(Expression expression) {
             this.expression = expression;
@@ -263,7 +263,7 @@ abstract class Statement extends GrammarRules {
         }
     }
 
-    public static class PrintStatement extends Statement {
+    class PrintStatement extends Statement {
         public PrintStatement(Expression expression) {
             super();
         }
@@ -271,17 +271,17 @@ abstract class Statement extends GrammarRules {
             return visitor.visitPrintStatement(this);
         }
     }
-}
-abstract class Expression extends GrammarRules {
-    static class LogicalExpression extends Expression {
-        LogicalTerm firstTerm;
-        List<Token> operators;
-        List<LogicalTerm> terms;
 
-        LogicalExpression(LogicalTerm firstTerm, List<Token> operators, List<LogicalTerm> terms) {
+abstract class Expression extends GrammarRules {}
+     class LogicalExpression extends Expression {
+        LogicalTerm firstTerm;
+        TokenType operator;
+        LogicalTerm term;
+
+        LogicalExpression(LogicalTerm firstTerm, TokenType operator, LogicalTerm term) {
             this.firstTerm = firstTerm;
-            this.operators = operators;
-            this.terms = terms;
+            this.operator = operator;
+            this.term = term;
         }
         @Override
         public <R> R accept(RulesVisitor<R> visitor) {
@@ -291,15 +291,15 @@ abstract class Expression extends GrammarRules {
     }
 
     // Logical term node
-    static class LogicalTerm extends Expression {
+     class LogicalTerm extends Expression {
         Comparison firstComparison;
-        List<Token> operators;
-        List<Comparison> comparisons;
+        Token operator;
+        Comparison comparison;
 
-        LogicalTerm(Comparison firstComparison, List<Token> operators, List<Comparison> comparisons) {
+        LogicalTerm(Comparison firstComparison, Token operator, Comparison comparison) {
             this.firstComparison = firstComparison;
-            this.operators = operators;
-            this.comparisons = comparisons;
+            this.operator = operator;
+            this.comparison = comparison;
         }
         public <R> R accept(RulesVisitor<R> visitor) {
             return visitor.visitLogicalTerm(this);
@@ -307,7 +307,7 @@ abstract class Expression extends GrammarRules {
     }
 
     // Comparison node
-    static class Comparison extends Expression {
+     class Comparison extends Expression {
         AdditiveExpression left;
         Token operator;
         AdditiveExpression right;
@@ -325,7 +325,7 @@ abstract class Expression extends GrammarRules {
     }
 
     // Additive expression node
-    static class AdditiveExpression extends Expression {
+     class AdditiveExpression extends Expression {
         MultiplicativeExpression left;
         Token operator;
         MultiplicativeExpression right;
@@ -343,7 +343,7 @@ abstract class Expression extends GrammarRules {
     }
 
     // Multiplicative expression node
-    static class MultiplicativeExpression extends Expression {
+     class MultiplicativeExpression extends Expression {
         UnaryExpression left;
         Token operator;
         UnaryExpression right;
@@ -360,7 +360,7 @@ abstract class Expression extends GrammarRules {
         }
     }
 
-    static class UnaryExpression extends Expression {
+     class UnaryExpression extends Expression {
         PrimaryExpression expression;
         Token operator;
 
@@ -376,7 +376,7 @@ abstract class Expression extends GrammarRules {
     }
 
 
-    static class PrimaryExpression extends Expression {
+     class PrimaryExpression extends Expression {
         final String identifier; // Can be null if it's not an identifier
         final Constant constant; // Can be null if it's not a constant
         final Expression subExpression;
@@ -401,7 +401,7 @@ abstract class Expression extends GrammarRules {
             return visitor.visitPrimaryExpression(this);
         }
     }
-}
+
  class Identifier extends GrammarRules {
     String name;
     Identifier(String name) {

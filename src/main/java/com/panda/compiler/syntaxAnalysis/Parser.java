@@ -81,16 +81,26 @@ public class Parser {
         consumeToken(TokenType.LPARENTHESIS);
         Expression expression = parseExpression();
         consumeToken(TokenType.RPARENTHESIS);
-        return new Statement.PrintStatement(expression);
+        return new PrintStatement(expression);
     }
 
     private Statement parseContinueStatement() {
+        consumeToken(TokenType.CONTINUE);
+        consumeToken(TokenType.SEMICOLON);
+        return new JumpStatement(TokenType.CONTINUE);
     }
 
     private Statement parseBreakStatement() {
+        consumeToken(TokenType.BREAK);
+        consumeToken(TokenType.SEMICOLON);
+        return new JumpStatement(TokenType.BREAK);
     }
 
     private Statement parseReturnStatement() {
+        consumeToken(RETURN);
+        Expression expression = parseExpression();
+        consumeToken(TokenType.SEMICOLON);
+        return new JumpStatement(RETURN, expression);
     }
 
     private Statement parseForStatement() {
@@ -121,14 +131,22 @@ public class Parser {
     }
 
     private Expression parseExpression() {
-        return parseAssignmentExpression();
-      return error(peek(), "Expected expression, found: " + peek());
-
-
+        return parseLogicalExpression();
     }
 
-    private Expression parseAssignmentExpression() {
+    private Expression parseLogicalExpression() {
+        Expression left =  parseLogicalTerm();
+        while (match(TokenType.OR, TokenType.AND)) {
+            TokenType operator = previous().type();
+            LogicalTerm right = parseLogicalTerm();
+            left = new LogicalExpression((LogicalTerm)left, operator, (LogicalTerm)right);
+        }
+        return left;
     }
+
+    private LogicalTerm parseLogicalTerm() {
+    }
+
 
     private TypeSpecifier parseTypeSpecifier() {
         if (match(TokenType.INT, TokenType.FLOAT, TokenType.CHAR, TokenType.BOOL, TokenType.UINT, TokenType.STR, TokenType.VOID)) {

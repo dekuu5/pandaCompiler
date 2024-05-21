@@ -9,7 +9,7 @@ public interface RulesVisitor<R> {
 
     R visitParameterList(ParameterList parameterList);
 
-    R visitJumpStatement(Statement.JumpStatement jumpStatement);
+    R visitJumpStatement(JumpStatement jumpStatement);
 
     R visitDeclarator(Declarator declarator);
 
@@ -17,21 +17,21 @@ public interface RulesVisitor<R> {
 
     R visitCompoundStatement(CompoundStatement compoundStatement);
 
-    R visitIFStatement(Statement.ControlFlowStatement.If anIf);
+    R visitIFStatement(ControlFlowStatement.If anIf);
 
-    R visitVariableDeclarationStatement(Statement.VariableDeclarationStatement variableDeclarationStatement);
+    R visitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement);
 
     R visitIntegerConstant(Constant.IntegerConstant integerConstant);
 
     R visitFloatConstant(Constant.FloatConstant floatConstant);
 
-    R visitSwitchStatement(Statement.ControlFlowStatement.Switch aSwitch);
+    R visitSwitchStatement(ControlFlowStatement.Switch aSwitch);
 
-    R visitWhileStatement(Statement.ControlFlowStatement.While aWhile);
+    R visitWhileStatement(ControlFlowStatement.While aWhile);
 
-    R visitForStatement(Statement.ControlFlowStatement.For aFor);
+    R visitForStatement(ControlFlowStatement.For aFor);
 
-    R visitExpressionStatement(Statement.ExpressionStatement expressionStatement);
+    R visitExpressionStatement(ExpressionStatement expressionStatement);
 
     R visitStringConstant(Constant.StringConstant stringConstant);
 
@@ -41,21 +41,21 @@ public interface RulesVisitor<R> {
 
     R visitIdentifier(Identifier identifier);
 
-    R visitLogicalExpression(Expression.LogicalExpression logicalExpression);
+    R visitLogicalExpression(LogicalExpression logicalExpression);
 
-    R visitLogicalTerm(Expression.LogicalTerm logicalTerm);
+    R visitLogicalTerm(LogicalTerm logicalTerm);
 
-    R visitPrimaryExpression(Expression.PrimaryExpression primaryExpression);
+    R visitPrimaryExpression(PrimaryExpression primaryExpression);
 
-    R visitUnaryExpression(Expression.UnaryExpression unaryExpression);
+    R visitUnaryExpression(UnaryExpression unaryExpression);
 
-    R visitMultiplicativeExpression(Expression.MultiplicativeExpression multiplicativeExpression);
+    R visitMultiplicativeExpression(MultiplicativeExpression multiplicativeExpression);
 
-    R visitAdditiveExpression(Expression.AdditiveExpression additiveExpression);
+    R visitAdditiveExpression(AdditiveExpression additiveExpression);
 
-    R visitComparison(Expression.Comparison comparison);
+    R visitComparison(Comparison comparison);
 
-    R visitPrintStatement(Statement.PrintStatement printStatement);
+    R visitPrintStatement(PrintStatement printStatement);
 
-    R visitAssignmentStatement(Statement.AssignmentStatement assignmentStatement);
+    R visitAssignmentStatement(AssignmentStatement assignmentStatement);
 }
