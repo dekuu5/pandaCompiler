@@ -1,7 +1,7 @@
 fn main() {
     // Single-line comment
     /*
-    *  Multi-line comment
+     Multi-line comment
     */
     let x5: int = 5;
     let y: float = 5.0;
