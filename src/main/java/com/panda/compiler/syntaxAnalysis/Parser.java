@@ -66,7 +66,7 @@ public class Parser {
         consumeToken(TokenType.LCURLYBRACKET);
         List<Statement> statements = new ArrayList<>();
         while (!check(TokenType.RCURLYBRACKET)) {
-            statements.add((Statement) parseStatement());
+            statements.add(parseStatement());
         }
         consumeToken(TokenType.RCURLYBRACKET);
         return new CompoundStatement(statements);   
@@ -74,7 +74,7 @@ public class Parser {
 
     }
 
-    private GrammarRules parseStatement() {
+    private Statement parseStatement() {
         Token nextToken = peek();
         return switch (nextToken.type()) {
             case LET -> parseVariableStatementdeclartion();
@@ -95,7 +95,7 @@ public class Parser {
         return new VarableDeclarationStatement(parseVariableDeclaration());
     }
 
-    private GrammarRules parseInputStatement() {
+    private Statement parseInputStatement() {
         consumeToken(TokenType.INPUT);
         consumeToken(TokenType.LPARENTHESIS);
         consumeToken(TokenType.RPARENTHESIS);
@@ -139,8 +139,8 @@ public class Parser {
         consumeToken(TokenType.SEMICOLON);
         Expression increment = parseExpression();
         consumeToken(TokenType.RPARENTHESIS);
-        GrammarRules body = parseStatement();
-        return new ControlFlowStatement.For(initialization, condition, increment, (CompoundStatement) body);
+        CompoundStatement body = parseCompoundStatement();
+        return new ControlFlowStatement.For(initialization, condition, increment, body);
     }
 
     private Statement parseAssignmentStatement() {
@@ -158,8 +158,8 @@ public class Parser {
         consumeToken(TokenType.LPARENTHESIS);
         Expression condition = parseExpression();
         consumeToken(TokenType.RPARENTHESIS);
-        GrammarRules body = parseStatement();
-        return new ControlFlowStatement.While(condition, (CompoundStatement) body);
+        CompoundStatement body = parseCompoundStatement();
+        return new ControlFlowStatement.While(condition, body);
     }
 
     private Statement parseIfStatement() {
@@ -167,12 +167,12 @@ public class Parser {
         consumeToken(TokenType.LPARENTHESIS);
         Expression condition = parseExpression();
         consumeToken(TokenType.RPARENTHESIS);
-        GrammarRules thenBranch = parseStatement();
+        CompoundStatement thenBranch = parseCompoundStatement();
         if (match(TokenType.ELSE)) {
-            GrammarRules elseBranch = parseStatement();
-            return new ControlFlowStatement.If(condition, (CompoundStatement) thenBranch, (CompoundStatement) elseBranch);
+            CompoundStatement elseBranch = parseCompoundStatement();
+            return new ControlFlowStatement.If(condition, thenBranch,  elseBranch);
         }
-        return new ControlFlowStatement.If(condition, (CompoundStatement) thenBranch);
+        return new ControlFlowStatement.If(condition,  thenBranch);
 
     }
 
@@ -225,8 +225,7 @@ public class Parser {
         while (match(TokenType.OR, TokenType.AND)) {
             TokenType operator = previous().type();
             Expression right = parseLogicalTerm();
-            assert left instanceof LogicalTerm;
-            left = new LogicalExpression((LogicalTerm)left, operator, (LogicalTerm) right);
+            left = new LogicalExpression(left, operator,  right);
         }
         return left;
     }
@@ -236,7 +235,7 @@ public class Parser {
         while (match(TokenType.EQUAL, TokenType.NOTEQUAL, TokenType.BIGGER, TokenType.SMALLER, TokenType.BIGGEREQUAL, TokenType.SMALLEREQUAL)) {
             TokenType operator = previous().type();
             Expression right = parseAdditiveExpression();
-            left = new Comparison((AdditiveExpression) left, operator, (AdditiveExpression) right);
+            left = new Comparison( left, operator, right);
         }
         return left;
 
@@ -246,7 +245,7 @@ public class Parser {
         while (match(TokenType.PLUS, TokenType.MINUS)) {
             TokenType operator = previous().type();
             Expression right = parseMultiplicativeExpression();
-            left = new AdditiveExpression((MultiplicativeExpression) left, operator, (MultiplicativeExpression) right);
+            left = new AdditiveExpression( left, operator,  right);
         }
         return left;
     }
@@ -256,7 +255,7 @@ public class Parser {
         while (match(MULT, DIV, REMINDER)) {
             TokenType operator = previous().type();
             Expression right = parsePrimaryExpression();
-            left = new MultiplicativeExpression((PrimaryExpression)left, operator,(PrimaryExpression) right);
+            left = new MultiplicativeExpression(left, operator, right);
         }
         return left;
     }
@@ -265,7 +264,7 @@ public class Parser {
 
     private Expression parsePrimaryExpression() {
         if (check(TokenType.IDENTIFIER)) {
-            return new PrimaryExpression(String.valueOf(parseIdentifier()));
+            return new PrimaryExpression(parseIdentifier());
         }
         if (match(TokenType.NUMBER)) {
             return new PrimaryExpression(new Constant.IntegerConstant(Integer.parseInt(previous().value())));
