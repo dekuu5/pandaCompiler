@@ -56,7 +56,14 @@ class TranslationUnit extends GrammarRules {
             return visitor.visitDeclarationSpecifier(this);
          }
     }
-
+    class  EOFDeclaration extends ExternalDeclaration {
+        EOFDeclaration() {
+        }
+        @Override
+        public <R> R accept(RulesVisitor<R> visitor) {
+            return visitor.visitEOFDeclaration(this);
+        }
+    }
     class Declaration extends GrammarRules {
         final TypeSpecifier typeSpecifier;
         final Declarator declarator;
@@ -134,6 +141,7 @@ class CompoundStatement extends GrammarRules {
 }
 
 abstract class Statement extends GrammarRules {}
+
   class AssignmentStatement extends Statement {
         Declarator declarator;
         Expression expression;
@@ -243,8 +251,9 @@ abstract class Statement extends GrammarRules {}
     }
 
     class PrintStatement extends Statement {
+        Expression expression;
         public PrintStatement(Expression expression) {
-            super();
+            this.expression = expression;
         }
         public <R> R accept(RulesVisitor<R> visitor) {
             return visitor.visitPrintStatement(this);
@@ -331,11 +340,11 @@ abstract class Expression extends GrammarRules {}
 
     // Multiplicative expression node
      class MultiplicativeExpression extends Expression {
-        UnaryExpression left;
+        PrimaryExpression left;
         TokenType operator;
-        UnaryExpression right;
+        PrimaryExpression right;
 
-        MultiplicativeExpression(UnaryExpression left, TokenType operator, UnaryExpression right) {
+        MultiplicativeExpression(PrimaryExpression left, TokenType operator, PrimaryExpression right) {
             this.left = left;
             this.operator = operator;
             this.right = right;
@@ -347,20 +356,6 @@ abstract class Expression extends GrammarRules {}
         }
     }
 
-     class UnaryExpression extends Expression {
-        PrimaryExpression expression;
-        TokenType operator;
-
-        UnaryExpression(PrimaryExpression expression, TokenType operator) {
-            this.expression = expression;
-            this.operator = operator;
-        }
-
-        @Override
-        public <R> R accept(RulesVisitor<R> visitor) {
-            return visitor.visitUnaryExpression(this);
-        }
-    }
 
 
      class PrimaryExpression extends Expression {
@@ -458,4 +453,33 @@ abstract class Constant extends GrammarRules{
     }
         
     }
+
+class VarableDeclarationStatement extends Statement {
+    VariableDeclaration variableDeclaration;
+
+    VarableDeclarationStatement(VariableDeclaration variableDeclaration) {
+        this.variableDeclaration = variableDeclaration;
+
+    }
+
+    @Override
+    public <R> R accept(RulesVisitor<R> visitor) {
+        return visitor.visitDeclarationSpecifier(variableDeclaration);
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

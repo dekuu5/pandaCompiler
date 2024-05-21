@@ -26,19 +26,25 @@ public class Parser {
         List<ExternalDeclaration> externalDeclarations = new ArrayList<>();
         while (current < tokens.size()) {
             externalDeclarations.add(parseExternalDeclaration());
+
         }
         return new TranslationUnit(externalDeclarations);
     }
 
     private ExternalDeclaration parseExternalDeclaration() {
-        Token nextToken = peekNextToken();
+        Token nextToken = peek();
         return switch (nextToken.type()) {
             case FN -> parseFunctionDefinition();
             case LET -> parseVariableDeclaration();
+            case EOF -> parseEOFDeclaration();
             default -> throw new RuntimeException("Unexpected token: " + nextToken);
         };
     }
-    
+
+    private EOFDeclaration parseEOFDeclaration() {
+        consumeToken(TokenType.EOF);
+        return new EOFDeclaration();
+    }
     private FunctionDefinition parseFunctionDefinition() {
         consumeToken(TokenType.FN);
         Identifier identifier = parseIdentifier();
@@ -69,9 +75,9 @@ public class Parser {
     }
 
     private GrammarRules parseStatement() {
-        Token nextToken = peekNextToken();
+        Token nextToken = peek();
         return switch (nextToken.type()) {
-            case LET -> parseVariableDeclaration();
+            case LET -> parseVariableStatementdeclartion();
             case IF -> parseIfStatement();
             case WHILE -> parseWhileStatement();
             case FOR -> parseForStatement();
@@ -83,6 +89,10 @@ public class Parser {
             case INPUT -> parseInputStatement();
             default -> error(nextToken,"Unexpected token: ");
         };
+    }
+
+    private Statement parseVariableStatementdeclartion() {
+        return new VarableDeclarationStatement(parseVariableDeclaration());
     }
 
     private GrammarRules parseInputStatement() {
@@ -98,6 +108,7 @@ public class Parser {
         consumeToken(TokenType.LPARENTHESIS);
         Expression expression = parseExpression();
         consumeToken(TokenType.RPARENTHESIS);
+        consumeToken(TokenType.SEMICOLON);
         return new PrintStatement(expression);
     }
 
@@ -181,10 +192,11 @@ public class Parser {
     }
 
     private Identifier parseIdentifier() {
-        Token nextToken = consumeNextToken();
+        Token nextToken = peek();
         if (nextToken.type() != TokenType.IDENTIFIER) {
             error(nextToken, "Expected identifier, found: " + nextToken);
         }
+        advance();
         return new Identifier(nextToken.value());
 
     }
@@ -220,7 +232,8 @@ public class Parser {
     }
 
     private Expression parseLogicalTerm() {
-        Expression left = parseAdditiveExpression();        while (match(TokenType.EQUAL, TokenType.NOTEQUAL, TokenType.BIGGER, TokenType.SMALLER, TokenType.BIGGEREQUAL, TokenType.SMALLEREQUAL)) {
+        Expression left = parseAdditiveExpression();
+        while (match(TokenType.EQUAL, TokenType.NOTEQUAL, TokenType.BIGGER, TokenType.SMALLER, TokenType.BIGGEREQUAL, TokenType.SMALLEREQUAL)) {
             TokenType operator = previous().type();
             Expression right = parseAdditiveExpression();
             left = new Comparison((AdditiveExpression) left, operator, (AdditiveExpression) right);
@@ -243,7 +256,7 @@ public class Parser {
         while (match(MULT, DIV, REMINDER)) {
             TokenType operator = previous().type();
             Expression right = parsePrimaryExpression();
-            left = new MultiplicativeExpression((UnaryExpression) left, operator, (UnaryExpression) right);
+            left = new MultiplicativeExpression((PrimaryExpression)left, operator,(PrimaryExpression) right);
         }
         return left;
     }
@@ -251,7 +264,7 @@ public class Parser {
 
 
     private Expression parsePrimaryExpression() {
-        if (match(TokenType.IDENTIFIER)) {
+        if (check(TokenType.IDENTIFIER)) {
             return new PrimaryExpression(String.valueOf(parseIdentifier()));
         }
         if (match(TokenType.NUMBER)) {
