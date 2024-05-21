@@ -2,8 +2,8 @@ package com.panda.compiler.syntaxAnalysis;
 
 public interface RulesVisitor<R> {
     R visitTranslationUnit(TranslationUnit translationUnit);
-    R visitFunctionDefinition(ExternalDeclaration.FunctionDefinition functionDefinition);
-    R visitDeclarationSpecifier(ExternalDeclaration.VariableDeclaration declarationSpecifier);
+    R visitFunctionDefinition(FunctionDefinition functionDefinition);
+    R visitDeclarationSpecifier(VariableDeclaration declarationSpecifier);
     R visitDeclaration(Declaration declaration);
     R visitTypeSpecifier(TypeSpecifier typeSpecifier);
 
@@ -19,13 +19,10 @@ public interface RulesVisitor<R> {
 
     R visitIFStatement(ControlFlowStatement.If anIf);
 
-    R visitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement);
 
     R visitIntegerConstant(Constant.IntegerConstant integerConstant);
 
     R visitFloatConstant(Constant.FloatConstant floatConstant);
-
-    R visitSwitchStatement(ControlFlowStatement.Switch aSwitch);
 
     R visitWhileStatement(ControlFlowStatement.While aWhile);
 
@@ -58,4 +55,6 @@ public interface RulesVisitor<R> {
     R visitPrintStatement(PrintStatement printStatement);
 
     R visitAssignmentStatement(AssignmentStatement assignmentStatement);
+
+    R visitInputStatement(InputStatement inputStatement);
 }

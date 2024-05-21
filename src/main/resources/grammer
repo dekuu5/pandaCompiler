@@ -1,28 +1,22 @@
 <translation-unit> ::= {<external-declaration>}*
 
 <external-declaration> ::= <function-definition>
-                         | <variable-declaration>
+                         | <variable-declaration> done
 
 <function-definition> ::= 'fn' <identifier> '(' ')' <compound-statement>
                         | 'fn' <identifier> '(' <parameter-list> ')' <compound-statement>
 
 
 <variable-declaration> ::= 'let' <declarator> ':' <type-specifier> '=' <expression> ';'
-                          | 'let' <identifier> '=' <expression> ';'
-
-
-
-<declaration> ::= <type-specifier> <declarator> ';'
-               | <type-specifier> <declarator> '=' <expression> ';'
+                          | 'let' <declarator> ':' <type-specifier> ';' done
 
 
 <parameter-list> ::= <parameter-declaration>
-                  | <parameter-list> ',' <parameter-declaration>
-<parameter-declaration> ::= <type-specifier> <declarator>
+                  | <parameter-list> ',' <parameter-declaration> done
+<parameter-declaration> ::= <type-specifier> <declarator> done
 
 <declarator> ::= <identifier>
-                | <declarator> '[' ']'
-                | <declarator> '[' <integer-constant> ']'
+                | <declarator> '[' <integer-constant> ']' done
 
 <type-specifier> ::= 'int'
                    | 'float'
@@ -30,9 +24,10 @@
                    | 'void'
                    | 'bool'
                    | 'uint'
-                   | 'str'
+                   | 'str' done
 
-<compound-statement> ::= '{' {<declaration>}* {<statement> ';'}* '}'
+<compound-statement> ::= '{' {<statement> }* '}' done
+
 
 <statement> ::= <variable-declaration>
               | <control-flow-statement>
@@ -40,31 +35,25 @@
               | <expression-statement>
               |<print-statement>
               |<input-statement>
-              |<Assignment-statement>
-<Assignment-statement> ::= <declarator> '=' <expression> ';'
+              |<Assignment-statement> done
+<Assignment-statement> ::= <declarator> '=' <expression> ';' done
 
-<print-statement> ::= 'print' '(' <expression> ')' ';'
+<print-statement> ::= 'print' '(' <expression> ')' ';' done
 
-<input-statement> ::= 'input' '(' ')' ';'
+<input-statement> ::= 'input' '(' ')' ';' done
 <jump-statement> ::= 'continue' ';'
                    | 'break' ';'
-                   | 'return' {<expression>}? ';'
+                   | 'return' {<expression>}? ';' done
 
 <control-flow-statement> ::= <if-statement>
-                            | <switch-statement>
                             | <while-statement>
                             | <for-statement>
 
-<if-statement> ::= 'if' '(' <expression> ')'  <compound-statement> ['else' <statement>]
+<if-statement> ::= 'if' '(' <expression> ')'  <compound-statement> ['else' <statement>] done
 
-<switch-statement> ::= 'switch' '(' <expression> ')' '{' {<case-statement>}* '}'
+<while-statement> ::= 'while' '(' <expression> ')' <statement> done
 
-<case-statement> ::= 'case' <constant> ':' <statement>
-                  | 'default' ':' <statement>
-
-<while-statement> ::= 'while' '(' <expression> ')' <statement>
-
-<for-statement> ::= 'for' '(' [<expression>] ';' [<expression>] ';' [<expression>] ')' <statement>
+<for-statement> ::= 'for' '(' [<expression>] ';' [<expression>] ';' [<expression>] ')' <statement> done
 
 <expression-statement> ::= [<expression>] ';'
 
@@ -108,3 +97,8 @@
 <boolean-constant> ::= 'true'
                      | 'false'
 <identifier> ::= [a-zA-Z_][a-zA-Z0-9_]*
+////
+//TODO: Add Assignment To array
+//TODO: Add Function Call
+
+//TODO: Add Switch Statement

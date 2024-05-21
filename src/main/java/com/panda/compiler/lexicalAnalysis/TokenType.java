@@ -8,6 +8,7 @@ public enum TokenType {
     ELSE,
     WHILE,
     FOR,
+    INPUT,
     RETURN,
     BREAK,
     CONTINUE,
