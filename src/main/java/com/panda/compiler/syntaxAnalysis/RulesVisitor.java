@@ -44,7 +44,6 @@ public interface RulesVisitor<R> {
 
     R visitPrimaryExpression(PrimaryExpression primaryExpression);
 
-    R visitUnaryExpression(UnaryExpression unaryExpression);
 
     R visitMultiplicativeExpression(MultiplicativeExpression multiplicativeExpression);
 
@@ -57,4 +56,6 @@ public interface RulesVisitor<R> {
     R visitAssignmentStatement(AssignmentStatement assignmentStatement);
 
     R visitInputStatement(InputStatement inputStatement);
+
+    R visitEOFDeclaration(EOFDeclaration eofDeclaration);
 }
