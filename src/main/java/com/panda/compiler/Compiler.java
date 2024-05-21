@@ -1,6 +1,5 @@
 package com.panda.compiler;
 
-import com.panda.compiler.lexicalAnalysis.LexicalAnalysis;
 import com.panda.compiler.lexicalAnalysis.Token;
 import com.panda.compiler.lexicalAnalysis.Toknizer;
 
@@ -11,7 +10,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Compiler {
-//    LexicalAnalysis lexicalAnalysis;
+    //    LexicalAnalysis lexicalAnalysis;
     Toknizer toknizer;
 
     String sourse;
@@ -28,10 +27,11 @@ public class Compiler {
         System.out.println("Compiling...");
 
         List<Token> tokens =  toknizer.scanTokens();
-
+        // Parser parser = new Parser(tokens);
         for(Token t : tokens) {
             System.out.println(t);
         }
+
         System.out.println("Compilation finished");
 
     }

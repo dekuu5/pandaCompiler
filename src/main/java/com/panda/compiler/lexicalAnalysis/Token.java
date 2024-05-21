@@ -9,9 +9,8 @@ public record Token(TokenType type, String value, Object literal, int line) {
         return "Token{" +
                 "type=" + type +
                 ", value='" + value + '\'' +
-
+                ", literal=" + literal +
                 ", position=(" + line +")}";
     }
 }
-
 

@@ -1,0 +1,110 @@
+<translation-unit> ::= {<external-declaration>}*
+
+<external-declaration> ::= <function-definition>
+                         | <variable-declaration>
+
+<function-definition> ::= 'fn' <identifier> '(' ')' <compound-statement>
+                        | 'fn' <identifier> '(' <parameter-list> ')' <compound-statement>
+
+
+<variable-declaration> ::= 'let' <declarator> ':' <type-specifier> '=' <expression> ';'
+                          | 'let' <identifier> '=' <expression> ';'
+
+
+
+<declaration> ::= <type-specifier> <declarator> ';'
+               | <type-specifier> <declarator> '=' <expression> ';'
+
+
+<parameter-list> ::= <parameter-declaration>
+                  | <parameter-list> ',' <parameter-declaration>
+<parameter-declaration> ::= <type-specifier> <declarator>
+
+<declarator> ::= <identifier>
+                | <declarator> '[' ']'
+                | <declarator> '[' <integer-constant> ']'
+
+<type-specifier> ::= 'int'
+                   | 'float'
+                   | 'char'
+                   | 'void'
+                   | 'bool'
+                   | 'uint'
+                   | 'str'
+
+<compound-statement> ::= '{' {<declaration>}* {<statement> ';'}* '}'
+
+<statement> ::= <variable-declaration>
+              | <control-flow-statement>
+              | <jump-statement>
+              | <expression-statement>
+              |<print-statement>
+              |<input-statement>
+              |<Assignment-statement>
+<Assignment-statement> ::= <declarator> '=' <expression> ';'
+
+<print-statement> ::= 'print' '(' <expression> ')' ';'
+
+<input-statement> ::= 'input' '(' ')' ';'
+<jump-statement> ::= 'continue' ';'
+                   | 'break' ';'
+                   | 'return' {<expression>}? ';'
+
+<control-flow-statement> ::= <if-statement>
+                            | <switch-statement>
+                            | <while-statement>
+                            | <for-statement>
+
+<if-statement> ::= 'if' '(' <expression> ')'  <compound-statement> ['else' <statement>]
+
+<switch-statement> ::= 'switch' '(' <expression> ')' '{' {<case-statement>}* '}'
+
+<case-statement> ::= 'case' <constant> ':' <statement>
+                  | 'default' ':' <statement>
+
+<while-statement> ::= 'while' '(' <expression> ')' <statement>
+
+<for-statement> ::= 'for' '(' [<expression>] ';' [<expression>] ';' [<expression>] ')' <statement>
+
+<expression-statement> ::= [<expression>] ';'
+
+<expression> ::= <logical-expression>
+
+
+<logical-expression> ::= <logical-term> { ('||' | '&&') <logical-term> }
+
+<logical-term> ::= <comparison> { ('==' | '!=') <comparison> }
+
+<comparison> ::= <additive-expression> { ('>' | '<' | '<=' | '>=') <additive-expression> }
+
+<additive-expression> ::= <multiplicative-expression> {('+' | '-') <multiplicative-expression>}
+
+<multiplicative-expression> ::= <unary-expression> {('*' | '/' | '%') <unary-expression>}
+
+<unary-expression> ::= <primary-expression>
+                      | ('++' | '--') <unary-expression>
+                      | '!' <unary-expression>
+
+
+<primary-expression> ::= <identifier>
+                        | <constant>
+                        | '(' <expression> ')'
+
+<constant> ::= <integer-constant>
+             | <float-constant>
+             | <character-constant>
+             | <string-literal>
+             | <boolean-constant>
+
+<integer-constant> ::= [-+]?[0-9]+
+
+<float-constant> ::= [-+]?[0-9]*\.[0-9]+
+
+<character-constant> ::= "'" <character> "'"
+<character> ::= <escape-sequence> | <c-char>
+<c-char> ::= <any ASCII character except single-quote or backslash>
+<string-literal> ::= '"' <characters> '"'
+<characters> ::= <character> <characters> | <character>
+<boolean-constant> ::= 'true'
+                     | 'false'
+<identifier> ::= [a-zA-Z_][a-zA-Z0-9_]*
