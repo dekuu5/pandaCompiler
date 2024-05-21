@@ -46,14 +46,14 @@ public class Parser {
         List<ParameterDeclaration> parameters = parseParameterList();
         consumeToken(TokenType.RPARENTHESIS);
         CompoundStatement compoundStatement = parseCompoundStatement();
-        return new ExternalDeclaration.FunctionDefinition(identifier, (ParameterList) parameters, compoundStatement);
+        return new ExternalDeclaration.FunctionDefinition(identifier, (ParameterList) parameters, (CompoundStatement) compoundStatement);
     }
 
     private CompoundStatement parseCompoundStatement() {
         consumeToken(TokenType.LCURLYBRACKET);
         List<Statement> statements = new ArrayList<>();
         while (!check(TokenType.RCURLYBRACKET)) {
-            statements.add(parseStatement());
+            statements.add((Statement) parseStatement());
         }
         consumeToken(TokenType.RCURLYBRACKET);
         return new CompoundStatement(statements);   
@@ -61,10 +61,10 @@ public class Parser {
 
     }
 
-    private Statement parseStatement() {
+    private GrammarRules parseStatement() {
         Token nextToken = peekNextToken();
         return switch (nextToken.type()) {
-          //  case LET -> parseVariableDeclaration();
+            case LET -> parseVariableDeclaration();
             case IF -> parseIfStatement();
             case WHILE -> parseWhileStatement();
             case FOR -> parseForStatement();
@@ -104,6 +104,19 @@ public class Parser {
     }
 
     private Statement parseForStatement() {
+        consumeToken(TokenType.FOR);
+        consumeToken(TokenType.LPARENTHESIS);
+        Statement initialization = parseAssignmentStatement();
+        Expression condition = parseExpression();
+        consumeToken(TokenType.SEMICOLON);
+        Expression increment = parseExpression();
+        consumeToken(TokenType.RPARENTHESIS);
+        GrammarRules body = parseStatement();
+        return new ControlFlowStatement.For(initialization, condition, increment, (CompoundStatement) body);
+    }
+
+    private Statement parseAssignmentStatement() {
+
     }
 
     private Statement parseWhileStatement() {
@@ -116,6 +129,11 @@ public class Parser {
     }
 
     private Identifier parseIdentifier() {
+        Token nextToken = consumeNextToken();
+        if (nextToken.type() != TokenType.IDENTIFIER) {
+            error(nextToken, "Expected identifier, found: " + nextToken);
+        }
+        return new Identifier(nextToken.value());
 
     }
 
@@ -139,12 +157,14 @@ public class Parser {
         while (match(TokenType.OR, TokenType.AND)) {
             TokenType operator = previous().type();
             LogicalTerm right = parseLogicalTerm();
+            assert left instanceof LogicalTerm;
             left = new LogicalExpression((LogicalTerm)left, operator, (LogicalTerm)right);
         }
         return left;
     }
 
     private LogicalTerm parseLogicalTerm() {
+
     }
 
 

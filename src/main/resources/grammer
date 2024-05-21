@@ -9,11 +9,7 @@
 
 <variable-declaration> ::= 'let' <declarator> ':' <type-specifier> '=' <expression> ';'
                           | 'let' <identifier> '=' <expression> ';'
-
-
-
-<declaration> ::= <type-specifier> <declarator> ';'
-               | <type-specifier> <declarator> '=' <expression> ';'
+                            | 'let' <declarator> ':' <type-specifier> ';'
 
 
 <parameter-list> ::= <parameter-declaration>
@@ -32,7 +28,8 @@
                    | 'uint'
                    | 'str'
 
-<compound-statement> ::= '{' {<declaration>}* {<statement> ';'}* '}'
+<compound-statement> ::= '{' {<statement> }* '}'
+
 
 <statement> ::= <variable-declaration>
               | <control-flow-statement>

@@ -241,7 +241,7 @@ abstract class Statement extends GrammarRules {}
             final Expression condition;
             final Statement increment;
             final CompoundStatement statement;
-            For(Statement initialization, Expression condition, Statement increment, CompoundStatement statement) {
+            For(Statement initialization, Expression condition, Expression increment, CompoundStatement statement) {
                 this.initialization = initialization;
                 this.condition = condition;
                 this.increment = increment;
