@@ -182,8 +182,11 @@ public class Toknizer {
         if(peek()=='.'&& isDigit(peekNext())){
             advance();
             while(isDigit(peek())) advance();
+            addToken(NUMBERFLOAT,
+                    Double.parseDouble(source.substring(start, current)));
+            return;
         }
-        addToken(NUMBER,
+        addToken(NUMBERINT,
                 Double.parseDouble(source.substring(start, current)));
 
     }

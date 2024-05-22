@@ -51,7 +51,7 @@
 
 <if-statement> ::= 'if' '(' <expression> ')'  <compound-statement> ['else' <statement>] done
 
-<while-statement> ::= 'while' '(' <expression> ')' <statement> done
+<while-statement> ::= 'while' '(' <expression> ')'  <compound-statement>  done
 
 <for-statement> ::= 'for' '(' [<expression>] ';' [<expression>] ';' [<expression>] ')' <statement> done
 

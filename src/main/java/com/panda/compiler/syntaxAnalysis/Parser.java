@@ -9,7 +9,7 @@ import java.util.List;
 import static com.panda.compiler.lexicalAnalysis.TokenType.*;
 
 public class Parser {
-     private final List<Token> tokens;
+    private final List<Token> tokens;
     private int current = 0;
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
@@ -52,9 +52,9 @@ public class Parser {
         List<ParameterDeclaration> parameters;
         if (!check(TokenType.RPARENTHESIS)) {
             parameters = parseParameterList();
-        consumeToken(TokenType.RPARENTHESIS);
-        CompoundStatement compoundStatement = parseCompoundStatement();
-        return new FunctionDefinition(identifier, (ParameterList) parameters, compoundStatement);}
+            consumeToken(TokenType.RPARENTHESIS);
+            CompoundStatement compoundStatement = parseCompoundStatement();
+            return new FunctionDefinition(identifier, (ParameterList) parameters, compoundStatement);}
         else {
             consumeToken(TokenType.RPARENTHESIS);
             CompoundStatement compoundStatement = parseCompoundStatement();
@@ -69,8 +69,8 @@ public class Parser {
             statements.add(parseStatement());
         }
         consumeToken(TokenType.RCURLYBRACKET);
-        return new CompoundStatement(statements);   
-        
+        return new CompoundStatement(statements);
+
 
     }
 
@@ -264,12 +264,12 @@ public class Parser {
 
     private Expression parsePrimaryExpression() {
         if (check(TokenType.IDENTIFIER)) {
-            return new Primary Expression (parseIdentifier());
+            return new PrimaryExpression(parseIdentifier().name);
         }
-        if (match(TokenType.NUMBER)) {
+        if (match(TokenType.NUMBERINT)) {
             return new PrimaryExpression(new Constant.IntegerConstant(Integer.parseInt(previous().value())));
         }
-        if (match(TokenType.FLOAT)) {
+        if (match(TokenType.NUMBERFLOAT)) {
             return new PrimaryExpression(new Constant.FloatConstant(Float.parseFloat(previous().value())));
         }
         if (match(TokenType.STRING)) {
@@ -293,7 +293,7 @@ public class Parser {
             return new TypeSpecifier(previous().type());
         }
 
-      return  error( peek(), "Expected type specifier, found: " + peek());
+        return  error( peek(), "Expected type specifier, found: " + peek());
     }
 
     private Declarator parseDeclarator() {
@@ -303,7 +303,7 @@ public class Parser {
         }
         if (check(TokenType.LBRACKET)) {
             consumeToken(TokenType.LBRACKET);
-            if(!check(TokenType.NUMBER)){
+            if(!check(NUMBERINT)){
                 return error(peek(), "Expected number, found: " + peek());
             }
             Constant.IntegerConstant size = parseIntegerConstant(consumeNextToken().value());
