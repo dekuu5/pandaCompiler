@@ -270,11 +270,11 @@ abstract class Statement extends GrammarRules {}
 
 abstract class Expression extends GrammarRules {}
      class LogicalExpression extends Expression {
-        LogicalTerm firstTerm;
+         Expression firstTerm;
         TokenType operator;
-        LogicalTerm term;
+         Expression term;
 
-        LogicalExpression(LogicalTerm firstTerm, TokenType operator, LogicalTerm term) {
+        LogicalExpression(Expression firstTerm, TokenType operator, Expression term) {
             this.firstTerm = firstTerm;
             this.operator = operator;
             this.term = term;
@@ -288,11 +288,11 @@ abstract class Expression extends GrammarRules {}
 
     // Logical term node
      class LogicalTerm extends Expression {
-        Comparison firstComparison;
-        Token operator;
-        Comparison comparison;
+        Expression firstComparison;
+        TokenType operator;
+        Expression comparison;
 
-        LogicalTerm(Comparison firstComparison, Token operator, Comparison comparison) {
+        LogicalTerm(Expression firstComparison, TokenType operator, Expression comparison) {
             this.firstComparison = firstComparison;
             this.operator = operator;
             this.comparison = comparison;
@@ -304,11 +304,11 @@ abstract class Expression extends GrammarRules {}
 
     // Comparison node
      class Comparison extends Expression {
-        AdditiveExpression left;
+        Expression left;
         TokenType operator;
-        AdditiveExpression right;
+        Expression right;
 
-        Comparison(AdditiveExpression left, TokenType operator, AdditiveExpression right) {
+        Comparison(Expression left, TokenType operator, Expression right) {
             this.left = left;
             this.operator = operator;
             this.right = right;
@@ -322,11 +322,11 @@ abstract class Expression extends GrammarRules {}
 
     // Additive expression node
      class AdditiveExpression extends Expression {
-        MultiplicativeExpression left;
+        Expression left;
         TokenType operator;
-        MultiplicativeExpression right;
+        Expression right;
 
-        AdditiveExpression(MultiplicativeExpression left, TokenType operator, MultiplicativeExpression right) {
+        AdditiveExpression(Expression left, TokenType operator, Expression right) {
             this.left = left;
             this.operator = operator;
             this.right = right;
@@ -340,11 +340,11 @@ abstract class Expression extends GrammarRules {}
 
     // Multiplicative expression node
      class MultiplicativeExpression extends Expression {
-        PrimaryExpression left;
+        Expression left;
         TokenType operator;
-        PrimaryExpression right;
+        Expression right;
 
-        MultiplicativeExpression(PrimaryExpression left, TokenType operator, PrimaryExpression right) {
+        MultiplicativeExpression(Expression left, TokenType operator, Expression right) {
             this.left = left;
             this.operator = operator;
             this.right = right;
