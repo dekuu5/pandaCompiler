@@ -264,7 +264,7 @@ public class Parser {
 
     private Expression parsePrimaryExpression() {
         if (check(TokenType.IDENTIFIER)) {
-            return new PrimaryExpression(parseIdentifier());
+            return new Primary Expression (parseIdentifier());
         }
         if (match(TokenType.NUMBER)) {
             return new PrimaryExpression(new Constant.IntegerConstant(Integer.parseInt(previous().value())));
