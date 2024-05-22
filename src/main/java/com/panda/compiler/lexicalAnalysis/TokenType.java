@@ -16,7 +16,8 @@ public enum TokenType {
     // KEYWARDS DONE
 
     IDENTIFIER,
-    NUMBER,
+    NUMBERINT,
+    NUMBERFLOAT,
     STRING,
 
     //OPREATORS

@@ -1,12 +1,12 @@
 let x : str = "panda is great";
 let y : int = 122;
-let a : float = 65;
+let a : float = 65.66;
 fn main(){
-    if(y > 21){
+    let i : int = 0;
+    while(i < 10){
         print(x);
-    }
-    else{
-        print(y);
+        print("\n");
+        i = i + 1;
     }
 
 }
